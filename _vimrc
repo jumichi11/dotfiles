@@ -1,4 +1,3 @@
-
 set noic
 set number
 set autoindent
@@ -15,12 +14,15 @@ set nowrap
 set tags=./tags,../tags,../../tags,../../../tags,tags;
 set fileencodings=
 set fileencodings=cp932,sjis,utf-8
-set fileformat=dos
+set fileformat=unix
 "検索をファイルの先頭へループしない
 "(test)set nowrapscan
 "閉じ括弧が入力されたとき、対応する括弧を表示する
 set showmatch
 set mouse=a
+if has('mac')
+	set ttymouse=xterm2
+endif
 set term=xterm
 set hlsearch
 set path +=./**
@@ -42,6 +44,7 @@ noremap @qr :QuickRun<CR>
 noremap @en :EvervimNotebookList<CR>
 noremap @ec :cd %:p:h<CR>:!explorer .<CR>
 noremap @ag :Unite grep<CR>
+noremap @tt :call vimproc#system('Ctags')<CR>
 
 noremap G Gzz
 noremap n nzz
@@ -59,7 +62,7 @@ nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
 nnoremap sJ <C-w>J
-nnoremap sK <C-w>K
+
 nnoremap sL <C-w>L
 nnoremap sH <C-w>H
 nnoremap sn gt
@@ -157,7 +160,6 @@ au BufNewFile *_test.c r $VIM/testsuite
 " let g:indent_guides_auto_colors=0
 " autocmd VimEnter,ColorScheme * :hi IndentGuidesOdd ctermbg=234
 " autocmd VimEnter,ColorScheme * :hi IndentGuidesEven ctermbg=235
-colorscheme jellybean_gui
 
 "NERDTreeの設定
 " autocmd VimEnter * execute 'NERDTreeToggle'
@@ -172,8 +174,8 @@ let Tlist_Exit_OnlyWindow = 1
 let g:clang_format#style_options = {
 			\ "BasedOnStyle" : "Google",
 			\ "BreakBeforeBraces" : "Linux"}
-autocmd BufWrite *.[ch] execute 'ClangFormat'
-autocmd BufWrite *.[ch] execute 'normal ggVG='
+" autocmd BufWrite *.[ch] execute 'ClangFormat'
+" autocmd BufWrite *.[ch] execute 'normal ggVG='
 map @cl <Plug>(operator-clang-format)
 
 " autocmd BufEnter * execute 'cd %:p:h'
@@ -183,7 +185,6 @@ map <unique> <F3> <Plug>Vm_toggle_sign
 map <silent> <unique> mm <Plug>Vm_toggle_sign
 
 "Ctags
-"autocm BufWrite,FileWriteCmd *.[ch] execute 'Ctags'
 let g:auto_ctags = 1
 
 " Plantuml .pu拡張子のファイル保存時にコンパイル
@@ -207,6 +208,18 @@ xmap <Space>M <Plug>(quickhl-manual-reset)
 
 nmap <Space>j <Plug>(quickhl-cword-toggle)
 nmap <Space>] <Plug>(quickhl-tag-toggle)
+
+  let g:airline_enable_branch = 0
+  let g:airline_section_b = "%t %M"
+  let g:airline_section_c = ''
+  let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
+  let g:airline_section_x =
+        \ "%{strlen(&fileformat)?&fileformat:''}".s:sep.
+        \ "%{strlen(&fenc)?&fenc:&enc}".s:sep.
+        \ "%{strlen(&filetype)?&filetype:'no ft'}"
+  let g:airline_section_y = '%3p%%'
+  let g:airline_section_z = get(g:, 'airline_linecolumn_prefix', '').'%3l:%-2v'
+  let g:airline#extensions#whitespace#enabled = 0
 
 " set omnifunc=OmniSharp#Complete
 "
@@ -386,7 +399,7 @@ NeoBundle 'nathanaelkane/vim-indent-guides'
 NeoBundle 'ctrlpvim/ctrlp.vim'
 NeoBundle 'rhysd/vim-clang-format'
 NeoBundle 'kana/vim-operator-user'
-" NeoBundle 'soramugi/auto-ctags.vim'
+NeoBundle 'soramugi/auto-ctags.vim'
 NeoBundle 'vim-scripts/guicolorscheme.vim'
 " NeoBundle 'altercation/vim-colors-solarized.vim'
 NeoBundle 'tpope/vim-pathogen.vim'
@@ -403,7 +416,7 @@ NeoBundle 'aohta/blockdiag.vim'
 NeoBundle 'jellybeans.vim'
 NeoBundle 'ciaranm/inkpot'
 NeoBundle 'vim-scripts/phd'
-NeoBundle 'godlygeek/csapprox'
+" NeoBundle 'godlygeek/csapprox'
 NeoBundle 'xolox/vim-session', {
             \ 'depends' : 'xolox/vim-misc',
           \ }
@@ -423,4 +436,6 @@ NeoBundleCheck
 
 set grepprg=grep\ -nH
 
+let &t_Co=256
+colorscheme jellybean_gui
 
