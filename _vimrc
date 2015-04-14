@@ -43,8 +43,9 @@ noremap @tp :tabPrev<CR>
 noremap @qr :QuickRun<CR>
 noremap @en :EvervimNotebookList<CR>
 noremap @ec :cd %:p:h<CR>:!explorer .<CR>
-noremap @ag :Unite grep<CR>
-noremap @tt :call vimproc#system('Ctags')<CR>
+noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
+noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
+noremap @cd :cd %:p:h<CR>
 
 noremap G Gzz
 noremap n nzz
@@ -62,7 +63,7 @@ nnoremap sk <C-w>k
 nnoremap sl <C-w>l
 nnoremap sh <C-w>h
 nnoremap sJ <C-w>J
-
+nnoremap sK <C-w>K
 nnoremap sL <C-w>L
 nnoremap sH <C-w>H
 nnoremap sn gt
@@ -124,7 +125,9 @@ let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
 "asciidocファイル保存時、変換処理を起動する
 "autocmd FileWritePost *.asciidoc execute 'asciidoc -b xhtml11 %:p'
 autocmd BufWritePost,FileWritePost *.asciidoc execute '!asciidoc -a icons -b xhtml11 %:p'
-
+autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
+autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
+autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
 "quickhl
 nmap <Space>m <Plug>(quickhl-toggle)
 xmap <Space>m <Plug>(quickhl-toggle)
@@ -186,12 +189,6 @@ map <silent> <unique> mm <Plug>Vm_toggle_sign
 
 "Ctags
 let g:auto_ctags = 1
-
-" Plantuml .pu拡張子のファイル保存時にコンパイル
-" plantuml.shは外部スクリプト
-autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %'
-
-autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
 
 " vimを辞める時に自動保存
 let g:session_autosave = 'yes'
@@ -392,6 +389,7 @@ NeoBundle 'othree/eregex.vim'
 NeoBundle 'Shougo/vimproc.vim'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-surround'
+NeoBundle 'visualmark.vim'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'aklt/plantuml-syntax'
 NeoBundle 'tpope/vim-unimpaired'
@@ -412,6 +410,7 @@ NeoBundle 'ag.vim'
 NeoBundle 'adinapoli/vim-markmultiple'
 NeoBundle 'dagwieers/asciidoc-vim'
 NeoBundle 'chikamichi/mediawiki.vim'
+NeoBundle 'vcscommand.vim'
 NeoBundle 'aohta/blockdiag.vim'
 NeoBundle 'jellybeans.vim'
 NeoBundle 'ciaranm/inkpot'
