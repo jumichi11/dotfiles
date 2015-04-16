@@ -32,6 +32,8 @@ set cursorline
 set noswapfile
 set nobackup
 set timeoutlen=250
+" ステータス行を表示(これをやらないと、1ウィンドウ1バッファだけのときに、ステータスラインが表示できない)
+set laststatus=2
 " Undo履歴をファイルに保存する
 set undofile
 syntax on
@@ -424,6 +426,7 @@ NeoBundle 'xolox/vim-session', {
           \ }
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'junegunn/vim-easy-align'
+NeoBundle 'tpope/vim-fugitive'
 
 "ruby関連
 NeoBundle 'ngmy/vim-rubocop'
