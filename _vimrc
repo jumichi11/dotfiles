@@ -40,14 +40,13 @@ syntax on
 
 noremap @ne :NERDTreeToggle<CR>
 noremap @vs :VimShell<CR>
-noremap @tn :tabNext<CR>
-noremap @tp :tabPrev<CR>
 noremap @qr :QuickRun<CR>
 noremap @en :EvervimNotebookList<CR>
 noremap @ec :cd %:p:h<CR>:!explorer .<CR>
 noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
 noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
 noremap @cd :cd %:p:h<CR>
+noremap @ub :Unite buffer -auto-resize<CR>
 
 noremap G Gzz
 noremap n nzz
@@ -213,7 +212,7 @@ nmap <Space>] <Plug>(quickhl-tag-toggle)
 
   let g:airline_enable_branch = 0
   let g:airline_section_b = "%t %M"
-  let g:airline_section_c = ''
+  let g:airline_section_c = "%{fugitive#statusline()}"
   let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
   let g:airline_section_x =
         \ "%{strlen(&fileformat)?&fileformat:''}".s:sep.
