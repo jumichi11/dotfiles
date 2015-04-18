@@ -38,6 +38,8 @@ set laststatus=2
 set undofile
 syntax on
 
+
+
 noremap @ne :NERDTreeToggle<CR>
 noremap @vs :VimShell<CR>
 noremap @tn :tabNext<CR>
@@ -213,7 +215,7 @@ nmap <Space>] <Plug>(quickhl-tag-toggle)
 
   let g:airline_enable_branch = 0
   let g:airline_section_b = "%t %M"
-  let g:airline_section_c = ''
+  let g:airline_section_c = '%{getcwd()[-32:]}'
   let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
   let g:airline_section_x =
         \ "%{strlen(&fileformat)?&fileformat:''}".s:sep.
