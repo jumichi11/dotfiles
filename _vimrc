@@ -38,8 +38,6 @@ set laststatus=2
 set undofile
 syntax on
 
-
-
 noremap @ne :NERDTreeToggle<CR>
 noremap @vs :VimShell<CR>
 noremap @qr :QuickRun<CR>
@@ -202,6 +200,10 @@ let g:session_autosave = 'yes'
 let g:session_autoload = 'yes'
 " 1分間に1回自動保存
 let g:session_autosave_periodic = 1
+
+"git
+autocmd FileType gitcommit setlocal fenc=utf-8
+autocmd FileType gitcommit setlocal ff=unix
 
 "quickhl
 nmap <Space>m <Plug>(quickhl-manual-this)
@@ -428,6 +430,7 @@ NeoBundle 'xolox/vim-session', {
 NeoBundle 'godlygeek/tabular'
 NeoBundle 'junegunn/vim-easy-align'
 NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'cohama/agit.vim'
 
 "ruby関連
 NeoBundle 'ngmy/vim-rubocop'
