@@ -125,7 +125,7 @@ let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
 
 "asciidocファイル保存時、変換処理を起動する
 "autocmd FileWritePost *.asciidoc execute 'asciidoc -b xhtml11 %:p'
-autocmd BufWritePost,FileWritePost *.asciidoc execute '!asciidoc -a icons -b xhtml11 %:p'
+autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !asciidoc -a icons -b xhtml11 %:p'
 autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
 autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
 autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'

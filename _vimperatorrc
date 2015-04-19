@@ -1,0 +1,12 @@
+"3.9 (created: 2015/02/15 15:49:05)
+
+map sn <C-n>
+map sp <C-p>
+noremap st <C-t><Esc>o
+set focuscontent
+vmap <C-o> y<Esc><Esc>o<C-v><Return>
+vmap <C-w> y<Esc><Esc>owikipedia<Space><C-v><Return>
+vmap <C-a> y<Esc><Esc>oamazon<Space><C-v><Return>
+source! "C:\\Users\\teion_ga_hara_ni_hib\\_vimperatorrc.local"
+
+" vim: set ft=vimperator:
