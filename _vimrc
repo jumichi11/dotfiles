@@ -47,6 +47,7 @@ noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
 noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
 noremap @cd :cd %:p:h<CR>
 noremap @ub :Unite buffer -auto-resize<CR>
+noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
 
 noremap G Gzz
 noremap n nzz
