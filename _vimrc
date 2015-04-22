@@ -47,6 +47,8 @@ noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
 noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
 noremap @cd :cd %:p:h<CR>
 noremap @ub :Unite buffer -auto-resize<CR>
+noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
+noremap @mk :!make<CR>
 
 noremap G Gzz
 noremap n nzz
