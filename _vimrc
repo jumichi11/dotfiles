@@ -49,6 +49,8 @@ noremap @cd :cd %:p:h<CR>
 noremap @ub :Unite buffer -auto-resize<CR>
 noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
 noremap @mk :!make<CR>
+noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
+noremap @wb :VimwikiGoBackLink<CR>
 
 noremap G Gzz
 noremap n nzz
@@ -79,6 +81,7 @@ nnoremap sO <C-w>=
 nnoremap sN :<C-u>bn<CR>
 nnoremap sP :<C-u>bp<CR>
 nnoremap st :<C-u>tabnew<CR>
+nnoremap sc :<C-u>tabc<CR>
 nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
 nnoremap sv :<C-u>vs<CR>
@@ -100,7 +103,7 @@ if executable('ag')
   let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
   let g:unite_source_grep_recursive_opt = ''
 endif
-let g:extra_whitespace_ignored_filetypes = ['unite']
+let g:extra_whitespace_ignored_filetypes = ['unite', 'calendar']
 
 inoreabbrev <expr> /** "/**<CR>TODO(no comment)<CR>@author ".expand('$USER')."<CR>@param TODO(no comment)<CR>@return TODO(no comment)<CR>/"
 
@@ -131,6 +134,7 @@ autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !asciidoc -a icons
 autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
 autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
 autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
+autocmd BufWritePost,FileWritePost *.wiki execute 'VimwikiAll2HTML'
 "quickhl
 nmap <Space>m <Plug>(quickhl-toggle)
 xmap <Space>m <Plug>(quickhl-toggle)
@@ -227,6 +231,8 @@ nmap <Space>] <Plug>(quickhl-tag-toggle)
   let g:airline_section_y = '%3p%%'
   let g:airline_section_z = get(g:, 'airline_linecolumn_prefix', '').'%3l:%-2v'
   let g:airline#extensions#whitespace#enabled = 0
+  let g:airline_left_sep = ' '
+  let g:airline_right_sep = ' '
 
 " set omnifunc=OmniSharp#Complete
 "
@@ -433,6 +439,9 @@ NeoBundle 'godlygeek/tabular'
 NeoBundle 'junegunn/vim-easy-align'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'cohama/agit.vim'
+NeoBundle 'vimwiki/vimwiki'
+NeoBundle 'itchyny/calendar.vim'
+NeoBundle 'tacroe/unite-mark'
 
 "ruby関連
 NeoBundle 'ngmy/vim-rubocop'
