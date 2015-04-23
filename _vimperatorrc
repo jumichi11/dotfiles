@@ -1,9 +1,62 @@
 "3.9 (created: 2015/02/15 15:49:05)
 
+highlight Bell border: none; background-color: #d0d0d0;
+highlight Boolean color: orchid;
+highlight CmdLine font-size: 14px; background: black; color: #d0d0d0; -moz-transition: all 0.25s;
+highlight CompDesc width: 500px; max-width: 500px; color: #a0a0d0;
+highlight CompItem font-size: 12px;
+highlight CompItem[selected] color: #dddddd; background: #3c3c3f;
+highlight CompTitle font-size: 12px; font-weight: bold; background: -moz-linear-gradient(19% 75% 90deg, #2c2c2f, #2a2a2f, #2f2f2f 100%);
+highlight CompTitle>* color: #a0a0d0; border-bottom: 1px solid #3c3c3f; padding: 1px 0.5ex; text-shadow: 1px 1px 0px #0c0c0c;
+highlight ContentSeparator border: none; display: -moz-box;
+highlight Enabled color: #d0ffd0;
+highlight ErrorMsg color: #ffffff; background: #440000; font-size: 12px;
+highlight Filter color: #7090d0;
+highlight FrameIndicator background-color: red; opacity: 0.5; z-index: 999; position: fixed; top: 0; bottom: 0; left: 0; right: 0;
+highlight Function color: skyblue;
+highlight Hint font-family: monospace; font-size: 14px; font-weight: normal; color: #dddddd; background-color: #1c1c1c; border: none; margin: -0.7em 0 0 -0.7em; padding: 0px 5px; background-color: rgba(28, 28, 28, 0.8); border: 1px solid #1c1c1c; -moz-border-radius: 4px; -moz-box-shadow: 0px 0px 1px black; text-shadow: 1px 1px 2px black;
+highlight HintActive background-color: rgba( 85, 102, 187, 0.8); color: #dddded; text-decoration: none; -moz-border-radius: 4px; -moz-box-shadow: 0 0 2px #0c0c0c;
+highlight HintElem background-color: rgba(208, 208, 240, 0.8); color: #1c1c1c; text-decoration: none; -moz-border-radius: 4px; -moz-box-shadow: 0 0 2px #0c0c0c;
+highlight Indicator color: #a0a0d0;
+highlight InfoMsg color: #d0d0d0; background: #1c1c1c; font-size: 12px;
+highlight Keyword color: khaki;
+highlight LineNr color: #ffd0d0; background: #1c1c1c;
+highlight Mapping color: orchid;
+highlight Message white-space: normal; min-width: 100%; padding-left: 2em; text-indent: -2em; display: block; font-size: 12px;
+highlight ModeMsg color: #d0d0d0; background: #1c1c1c; font-size: 12px;
+highlight MoreMsg color: #d0ffd0; background: #1c1c1c; font-size: 12px;
+highlight NonText color: #a0a0d0; min-height: 16px; padding-left: 2px; font-size: 12px;
+highlight Normal color: #d0d0d0; background: #1c1c1c; font-size: 12px;
+highlight Null color: cornflowerblue;
+highlight Number color: cornflowerblue;
+highlight Object color: khaki;
+highlight Preview color: #a0a0d0; font-size: 12px;
+highlight PromptText color: #1c1c1c; background: #d0d0f0; font-size: 12px;
+highlight Question color: #a0a0d0; background: #1c1c1c; font-weight: bold;
+highlight StatusLine color: #7090d0; background: transparent; font-weight: normal; font-size: 12px;
+highlight String color: orchid;
+highlight Tag color: #a0a0d0;
+highlight Title color: orchid; background: #1c1c1c; font-weight: bold;
+highlight URL text-decoration: none; color: #d0ffd0;
+highlight WarningMsg color: #ff0000; background: #1c1c1c; font-size: 12px;
 map sn <C-n>
 map sp <C-p>
 noremap st <C-t><Esc>o
 set focuscontent
+style! -name=indigo-feed-button chrome://* <<EOF
+#feed-button {
+        list-style-image: url("chrome://browser/skin/feeds/feedIcon16.png") !important;
+        -moz-image-region: auto !important;
+        border: none !important;
+        min-width: 0 !important;
+    }
+EOF
+style! -name=indigo-sbmcommentsviewer chrome://* <<EOF
+.liberator-sbmcommentsviewer-content {
+        padding: 0 !important;
+        border: none !important;
+    }
+EOF
 vmap <C-o> y<Esc><Esc>o<C-v><Return>
 vmap <C-w> y<Esc><Esc>owikipedia<Space><C-v><Return>
 vmap <C-a> y<Esc><Esc>oamazon<Space><C-v><Return>
