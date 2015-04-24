@@ -134,7 +134,6 @@ autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !asciidoc -a icons
 autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
 autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
 autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
-autocmd BufWritePost,FileWritePost *.wiki execute 'VimwikiAll2HTML'
 "quickhl
 nmap <Space>m <Plug>(quickhl-toggle)
 xmap <Space>m <Plug>(quickhl-toggle)
@@ -405,7 +404,7 @@ NeoBundle 'othree/eregex.vim'
 NeoBundle 'Shougo/vimproc.vim'
 NeoBundle 'bling/vim-airline'
 NeoBundle 'tpope/vim-surround'
-NeoBundle 'visualmark.vim'
+" NeoBundle 'visualmark.vim'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'aklt/plantuml-syntax'
 NeoBundle 'tpope/vim-unimpaired'
