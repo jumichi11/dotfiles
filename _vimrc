@@ -91,7 +91,7 @@ nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
 
 " insert modeで開始
-let g:unite_enable_start_insert = 1
+let g:unite_enable_start_insert = 0
 
 " 大文字小文字を区別しない
 let g:unite_enable_ignore_case = 1
@@ -110,8 +110,10 @@ inoreabbrev <expr> /** "/**<CR>TODO(no comment)<CR>@author ".expand('$USER')."<C
 "neocomplcache
 let g:neocomplcache_enable_at_startup = 1
 
-"include guardの作成
-au BufNewFile *.h call IncludeGuard()
+"ctrlp キャッシュは削除しない
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
+
 function! IncludeGuard()
 	let fl = getline(1)
 	if fl =~ "^#if"
@@ -124,16 +126,29 @@ function! IncludeGuard()
 	execute "normal! Go#endif /* " . "_" . gatename . "_ */"
 endfunction
 
+augroup MY_AUTO_CMD
+	autocmd!
+	"asciidocファイル保存時、変換処理を起動する
+	autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !asciidoc -a icons -b xhtml11 %:p'
+	autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
+	autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
+	autocmd BufRead,BufNewFile *.diag           set filetype=blockdiag
+	autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
+	autocmd BufWritePost,FileWritePost *.wiki execute 'VimwikiAll2HTML'
+	"git
+	autocmd FileType gitcommit setlocal fenc=utf-8
+	autocmd FileType gitcommit setlocal ff=unix
+	"include guardの作成
+	autocmd BufNewFile *.h call IncludeGuard()
+	"_test.ファイルのテンプレート
+	autocmd BufNewFile *_test.c r $VIM/testsuite
+	"asciidocファイルのテンプレート
+	autocmd BufNewFile *.asciidoc r ~/.asciidoc_templete
+augroup END
+
 "ctrlp キャッシュは削除しない
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
-
-"asciidocファイル保存時、変換処理を起動する
-"autocmd FileWritePost *.asciidoc execute 'asciidoc -b xhtml11 %:p'
-autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !asciidoc -a icons -b xhtml11 %:p'
-autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
-autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
-autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
 "quickhl
 nmap <Space>m <Plug>(quickhl-toggle)
 xmap <Space>m <Plug>(quickhl-toggle)
@@ -160,12 +175,6 @@ let &t_te .= "\e[<0t\e[<s"
 let &t_SI .= "\e[3 q"
 let &t_EI .= "\e[1 q"
 
-"_test.ファイルのテンプレート
-au BufNewFile *_test.c r $VIM/testsuite
-
-"asciidocファイルのテンプレート
-au BufNewFile *.asciidoc r ~/.asciidoc_templete
-"
 " " vim-indent-guides
 " let g:indent_guides_enable_on_vim_startup=1
 " let g:indent_guides_guide_size=1
@@ -190,11 +199,6 @@ let g:clang_format#style_options = {
 " autocmd BufWrite *.[ch] execute 'normal ggVG='
 map @cl <Plug>(operator-clang-format)
 
-" autocmd BufEnter * execute 'cd %:p:h'
-au BufRead,BufNewFile *.diag           set filetype=blockdiag
-
-map <unique> <F3> <Plug>Vm_toggle_sign
-map <silent> <unique> mm <Plug>Vm_toggle_sign
 
 "Ctags
 let g:auto_ctags = 1
@@ -203,12 +207,9 @@ let g:auto_ctags = 1
 let g:session_autosave = 'yes'
 " 引数なしでvimを起動した時にsession保存ディレクトリのdefault.vimを開く
 let g:session_autoload = 'yes'
-" 1分間に1回自動保存
-let g:session_autosave_periodic = 1
+" 10分間に1回自動保存
+let g:session_autosave_periodic = 10
 
-"git
-autocmd FileType gitcommit setlocal fenc=utf-8
-autocmd FileType gitcommit setlocal ff=unix
 
 "quickhl
 nmap <Space>m <Plug>(quickhl-manual-this)
@@ -392,10 +393,8 @@ NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'bronson/vim-trailing-whitespace'
 
 NeoBundle 't9md/vim-quickhl'
-"NeoBundle 'Townk/vim-autoclose'
 NeoBundle 'kana/vim-smartinput'
 NeoBundle 'kana/vim-smartchr'
-NeoBundle 'grep.vim'
 NeoBundle 'vim-scripts/TagHighlight'
 NeoBundle 'vim-scripts/taglist.vim'
 NeoBundle 'vim-scripts/a.vim'
