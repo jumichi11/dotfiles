@@ -51,7 +51,24 @@ noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
 noremap @mk :!make<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
 noremap @wb :VimwikiGoBackLink<CR>
+
+noremap @tb :normal V<CR>:Tab /\|<CR>
 vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
+
+" Tab /| で、自動補正を開始するためのスクリプト
+inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+ 
+function! s:align()
+  let p = '^\s*|\s.*\s|\s*$'
+  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
+    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
+    Tabularize/|/l1
+    normal! 0
+    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  endif
+endfunction
+" Tab /| で、自動補正を開始するためのスクリプト、ここまで
 
 noremap G Gzz
 noremap n nzz
@@ -267,7 +284,7 @@ nmap <Space>] <Plug>(quickhl-tag-toggle)
 " "don't autoselect first item in omnicomplete, show if only one item (for preview)
 " "remove preview if you don't want to see any documentation whatsoever.
 " set completeopt=longest,menuone,preview
-" " Fetch full documentation during omnicomplete requests. 
+" " Fetch full documentation during omnicomplete requests.
 " " There is a performance penalty with this (especially on Mono)
 " " By default, only Type/Method signatures are fetched. Full documentation can still be fetched when
 " " you need it with the :OmniSharpDocumentation command.
@@ -307,8 +324,8 @@ nmap <Space>] <Plug>(quickhl-tag-toggle)
 " 	autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
 " 	autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
 " 	autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr> "finds members in the current buffer
-" 	" cursor can be anywhere on the line containing an issue 
-" 	autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>  
+" 	" cursor can be anywhere on the line containing an issue
+" 	autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
 " 	autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
 " 	autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
 " 	autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
@@ -330,7 +347,7 @@ nmap <Space>] <Plug>(quickhl-tag-toggle)
 "
 " " rename with dialog
 " nnoremap <leader>nm :OmniSharpRename<cr>
-" nnoremap <F2> :OmniSharpRename<cr>      
+" nnoremap <F2> :OmniSharpRename<cr>
 " " rename without dialog - with cursor on the symbol to rename... ':Rename newname'
 " command! -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
 "
@@ -441,7 +458,10 @@ NeoBundle 'cohama/agit.vim'
 NeoBundle 'vimwiki/vimwiki'
 NeoBundle 'itchyny/calendar.vim'
 NeoBundle 'tacroe/unite-mark'
-
+" NeoBundle 'mattn/googletranslate-vim'
+" NeoBundle 'translategoogle.vim'
+" NeoBundle 'mattn/webapi-vim'                                " 翻訳プラグインに必要
+" NeoBundle 'mattn/excitetranslate-vim'
 "ruby関連
 NeoBundle 'ngmy/vim-rubocop'
 NeoBundle 'tomtom/tcomment_vim'
@@ -457,4 +477,5 @@ set grepprg=grep\ -nH
 
 let &t_Co=256
 colorscheme jellybean_gui
+
 
