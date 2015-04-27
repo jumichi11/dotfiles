@@ -51,6 +51,7 @@ noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
 noremap @mk :!make<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
 noremap @wb :VimwikiGoBackLink<CR>
+noremap @mk :cd %:p:h<CR>:make!<CR>
 
 noremap G Gzz
 noremap n nzz
@@ -134,7 +135,7 @@ augroup MY_AUTO_CMD
 	autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
 	autocmd BufRead,BufNewFile *.diag           set filetype=blockdiag
 	autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
-	autocmd BufWritePost,FileWritePost *.wiki execute 'VimwikiAll2HTML'
+	" autocmd BufWritePost,FileWritePost *.wiki execute 'VimwikiAll2HTML'
 	"git
 	autocmd FileType gitcommit setlocal fenc=utf-8
 	autocmd FileType gitcommit setlocal ff=unix
@@ -144,6 +145,8 @@ augroup MY_AUTO_CMD
 	autocmd BufNewFile *_test.c r $VIM/testsuite
 	"asciidocファイルのテンプレート
 	autocmd BufNewFile *.asciidoc r ~/.asciidoc_templete
+	"行末の空白削除
+	autocmd BufWritePost,FileWritePost *.[ch] execute 'FixWhitespace'
 augroup END
 
 "ctrlp キャッシュは削除しない
@@ -423,7 +426,7 @@ NeoBundle 'ag.vim'
 " NeoBundle 'kannokanno/previm'
 NeoBundle 'adinapoli/vim-markmultiple'
 NeoBundle 'dagwieers/asciidoc-vim'
-NeoBundle 'chikamichi/mediawiki.vim'
+" NeoBundle 'chikamichi/mediawiki.vim'
 NeoBundle 'vcscommand.vim'
 NeoBundle 'aohta/blockdiag.vim'
 NeoBundle 'jellybeans.vim'
