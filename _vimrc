@@ -52,6 +52,7 @@ noremap @mk :!make<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
 noremap @wb :VimwikiGoBackLink<CR>
 noremap @mk :cd %:p:h<CR>:make!<CR>
+vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
 
 noremap G Gzz
 noremap n nzz
@@ -459,4 +460,18 @@ set grepprg=grep\ -nH
 
 let &t_Co=256
 colorscheme jellybean_gui
+
+inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+ 
+function! s:align()
+  let p = '^\s*|\s.*\s|\s*$'
+  if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    let column = strlen(substitute(getline('.')[0:col('.')],'[^|]','','g'))
+    let position = strlen(matchstr(getline('.')[0:col('.')],'.*|\s*\zs.*'))
+    Tabularize/|/l1
+    normal! 0
+    call search(repeat('[^|]*|',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  endif
+endfunction
+
 
