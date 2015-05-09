@@ -31,7 +31,7 @@ set backspace=indent,eol,start
 set cursorline
 set noswapfile
 set nobackup
-set timeoutlen=250
+set timeoutlen=500
 " ステータス行を表示(これをやらないと、1ウィンドウ1バッファだけのときに、ステータスラインが表示できない)
 set laststatus=2
 " Undo履歴をファイルに保存する
