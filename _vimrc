@@ -31,7 +31,7 @@ set backspace=indent,eol,start
 set cursorline
 set noswapfile
 set nobackup
-set timeoutlen=250
+set timeoutlen=500
 " ステータス行を表示(これをやらないと、1ウィンドウ1バッファだけのときに、ステータスラインが表示できない)
 set laststatus=2
 " Undo履歴をファイルに保存する
@@ -156,6 +156,9 @@ augroup MY_AUTO_CMD
 	"git
 	autocmd FileType gitcommit setlocal fenc=utf-8
 	autocmd FileType gitcommit setlocal ff=unix
+	"vimwiki
+	autocmd FileType vimwiki setlocal fenc=utf-8
+	autocmd FileType vimwiki setlocal ff=unix
 	"include guardの作成
 	autocmd BufNewFile *.h call IncludeGuard()
 	"_test.ファイルのテンプレート
@@ -479,4 +482,6 @@ set grepprg=grep\ -nH
 
 let &t_Co=256
 colorscheme jellybean_gui
+
+set t_ut=
 
