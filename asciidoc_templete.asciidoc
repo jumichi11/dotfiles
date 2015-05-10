@@ -10,6 +10,22 @@ Main Header
 
 Level1-1
 
+== Level1-2
+
+Level1-2
+
+== Level1-3
+
+Level1-3
+
+////
+
+== CheatSheet
+
+image::./images/scilab_plot_exsample_original.png[image]
+
+http://powerman.name/doc/asciidoc[cheatsheet]
+
 .table1
 [cols="1,1,1",options="header",width="50%"]
 |==================================
@@ -18,23 +34,9 @@ Level1-1
  | row2 | col1 | col2
 |==================================
 
-== Level1-2
-
-Level1-2
-
 ----
 brew install ruby
 ----
 
-== Level1-3
-
-Level1-3
-
-image::./images/scilab_plot_exsample_original.png[image]
-
-
-== CheatSheet
-
-http://powerman.name/doc/asciidoc[cheatsheet]
-
+////
 
