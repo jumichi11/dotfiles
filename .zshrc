@@ -113,6 +113,7 @@ echo Callme
 export PATH=$PATH:/usr/local/vim74/bin/
 export PATH=$PATH:~/java_wrapper
 alias vim='/usr/local/vim74/bin/vim.exe'
+alias ec='explorer .'
 alias gnuplot='/cygdrive/c/Program\ Files\ \(x86\)/gnuplot/bin/gnuplot.exe'
 export TERM=xterm
 export PLANTUML_PATH="`cygpath -w \`which plantuml.jar\``"
@@ -128,7 +129,52 @@ add-zsh-hook chpwd chpwd_recent_dirs
 # エントリが多くなるとちょっぴり重い
 # https://github.com/zsh-users/zsh/blob/zsh-5.0.4/Functions/Chpwd/chpwd_recent_filehandler#L39
 # zstyle ':chpwd:*' recent-dirs-max 5000
-zstyle ':chpwd:*' recent-dirs-max 0
+zstyle ':chpwd:*' recent-dirs-max 100
 zstyle ':chpwd:*' recent-dirs-default yes
 zstyle ':completion:*' recent-dirs-insert both
+
+#percolを使ったディレクトリ検索
+# {{{
+# cd 履歴を記録
+typeset -U chpwd_functions
+CD_HISTORY_FILE=${HOME}/.cd_history_file # cd 履歴の記録先ファイル
+function chpwd_record_history() {
+    echo $PWD >> ${CD_HISTORY_FILE}
+}
+chpwd_functions=($chpwd_functions chpwd_record_history)
+
+# percol を使って cd 履歴の中からディレクトリを選択
+# 過去の訪問回数が多いほど選択候補の上に来る
+function percol_get_destination_from_history() {
+    sort ${CD_HISTORY_FILE} | uniq -c | sort -r | \
+        sed -e 's/^[ ]*[0-9]*[ ]*//' | \
+        sed -e s"/^${HOME//\//\\/}/~/" | \
+        percol | xargs echo
+}
+
+# percol を使って cd 履歴の中からディレクトリを選択し cd するウィジェット
+function percol_cd_history() {
+    local destination=$(percol_get_destination_from_history)
+    [ -n $destination ] && cd ${destination/#\~/${HOME}}
+    zle reset-prompt
+}
+zle -N percol_cd_history
+
+# percol を使って cd 履歴の中からディレクトリを選択し，現在のカーソル位置に挿入するウィジェット
+function percol_insert_history() {
+    local destination=$(percol_get_destination_from_history)
+    if [ $? -eq 0 ]; then
+        local new_left="${LBUFFER} ${destination} "
+        BUFFER=${new_left}${RBUFFER}
+        CURSOR=${#new_left}
+    fi
+    zle reset-prompt
+}
+zle -N percol_insert_history
+# }}}
+
+# C-x ; でディレクトリに cd
+# C-x i でディレクトリを挿入
+bindkey '^x;' percol_cd_history
+bindkey '^xi' percol_insert_history
 
