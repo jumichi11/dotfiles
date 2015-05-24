@@ -178,3 +178,23 @@ zle -N percol_insert_history
 bindkey '^x;' percol_cd_history
 bindkey '^xi' percol_insert_history
 
+#cygstart‚·‚éŠg’£qƒŠƒXƒg
+alias -s bib=cygstart
+alias -s cif=cygstart
+alias -s eps=cygstart
+alias -s pdf=cygstart
+alias -s png=cygstart
+alias -s ppt=cygstart
+alias -s pptx=cygstart
+alias -s ps=cygstart
+alias -s tex=cygstart
+alias -s txt=cygstart
+alias -s vasp=cygstart
+alias -s vesta=cygstart
+alias -s xls=cygstart
+alias -s xlsx=cygstart
+alias -s xsf=cygstart
+alias -s jpg=cygstart
+alias -s jpeg=cygstart
+
+
