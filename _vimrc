@@ -57,7 +57,7 @@ vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
 
 " Tab /| で、自動補正を開始するためのスクリプト
 inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
- 
+
 function! s:align()
   let p = '^\s*|\s.*\s|\s*$'
   if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
@@ -99,6 +99,7 @@ nnoremap sO <C-w>=
 nnoremap sN :<C-u>bn<CR>
 nnoremap sP :<C-u>bp<CR>
 nnoremap st :<C-u>tabnew<CR>
+nnoremap sd :<C-u>tabnew<CR>:set filetype=drawit<CR>
 nnoremap sc :<C-u>tabc<CR>
 nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
@@ -121,7 +122,9 @@ if executable('ag')
   let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
   let g:unite_source_grep_recursive_opt = ''
 endif
-let g:extra_whitespace_ignored_filetypes = ['unite', 'calendar']
+
+" let g:extra_whitespace_ignored_filetypes = ['unite', 'calendar', 'drawit']
+let g:better_whitespace_filetypes_blacklist=['unite', 'calendar', 'drawit']
 
 inoreabbrev <expr> /** "/**<CR>TODO(no comment)<CR>@author ".expand('$USER')."<CR>@param TODO(no comment)<CR>@return TODO(no comment)<CR>/"
 
@@ -410,7 +413,9 @@ NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'scrooloose/nerdtree'
 
 " 行末の半角スペースを可視化
-NeoBundle 'bronson/vim-trailing-whitespace'
+" NeoBundle 'bronson/vim-trailing-whitespace'
+" NeoBundle 'vim-better-whitespace'
+NeoBundle 'ntpeters/vim-better-whitespace'
 
 NeoBundle 't9md/vim-quickhl'
 NeoBundle 'kana/vim-smartinput'
@@ -470,6 +475,7 @@ NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'ruby-matchit'
 NeoBundle 'tpope/vim-endwise.git'
 NeoBundle 'thinca/vim-ref'
+NeoBundle 'DrawIt'
 call neobundle#end()
 filetype plugin indent on
 

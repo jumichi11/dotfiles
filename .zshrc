@@ -5,6 +5,7 @@ SAVEHIST=100000
 
 #パスの設定
 PATH=/usr/local/bin:$PATH
+PATH=~/bin:$PATH
 export MANPATH=/usr/local/share/man:/usr/local/man:/usr/share/man
 
 # some more ls aliases
@@ -173,6 +174,21 @@ function percol_insert_history() {
 zle -N percol_insert_history
 # }}}
 
+function exists { which $1 &> /dev/null }
+
+if exists percol; then
+    function percol_select_history() {
+        local tac
+        exists gtac && tac="gtac" || { exists tac && tac="tac" || { tac="tail -r" } }
+        BUFFER=$(history -n 1 | eval $tac | percol --query "$LBUFFER")
+        CURSOR=$#BUFFER         # move cursor
+        zle -R -c               # refresh
+    }
+
+    zle -N percol_select_history
+    bindkey '^x:' percol_select_history
+fi
+
 # C-x ; でディレクトリに cd
 # C-x i でディレクトリを挿入
 bindkey '^x;' percol_cd_history
@@ -198,3 +214,4 @@ alias -s jpg=cygstart
 alias -s jpeg=cygstart
 
 
+alias c='cygstart'
