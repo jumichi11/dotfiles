@@ -166,7 +166,7 @@ augroup MY_AUTO_CMD
 	"asciidocファイルのテンプレート
 	autocmd BufNewFile *.asciidoc r ~/.asciidoc_templete
 	"行末の空白削除
-	autocmd BufWritePost,FileWritePost *.[ch] execute 'FixWhitespace'
+	" autocmd BufWritePost,FileWritePost *.[ch] execute 'FixWhitespace'
 augroup END
 
 "ctrlp キャッシュは削除しない
