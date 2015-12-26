@@ -7,6 +7,7 @@ source ~/dotfiles/dotfiles_link.sh
 
 #パスの設定
 PATH=/usr/local/bin:$PATH
+PATH=~/bin:$PATH
 export MANPATH=/usr/local/share/man:/usr/local/man:/usr/share/man
 
 # some more ls aliases
@@ -116,6 +117,7 @@ export PATH=$PATH:/usr/local/vim74/bin/
 export PATH=$PATH:~/java_wrapper
 export PATH=$PATH:~/bin/
 alias vim='/usr/local/vim74/bin/vim.exe'
+alias ec='explorer .'
 alias gnuplot='/cygdrive/c/Program\ Files\ \(x86\)/gnuplot/bin/gnuplot.exe'
 alias ec='explorer .'
 alias c='cygstart'
@@ -157,25 +159,60 @@ function percol_select_directory() {
 zle -N percol_select_directory
 bindkey "^X;" percol_select_directory
 
-# function percol_select_history() {
-#     local tac
-#     if which tac > /dev/null; then
-#         tac="tac"
-#     else
-#         tac="tail -r"
-#     fi
-#     BUFFER=$(fc -l -n 1 | eval $tac | percol --query "$LBUFFER")
-#     CURSOR=$#BUFFER             # move cursor
-#     zle -R -c                   # refresh
-# }
-# zle -N percol_select_history
-# bindkey "^X:" percol_select_history
-#
-# setopt hist_ignore_all_dups
-#
-# if (which zprof > /dev/null) ;then
-#   zprof | less
-# fi
+#percolを使ったディレクトリ検索
+# {{{
+# cd 履歴を記録
+typeset -U chpwd_functions
+CD_HISTORY_FILE=${HOME}/.cd_history_file # cd 履歴の記録先ファイル
+function chpwd_record_history() {
+    echo $PWD >> ${CD_HISTORY_FILE}
+}
+chpwd_functions=($chpwd_functions chpwd_record_history)
+
+# percol を使って cd 履歴の中からディレクトリを選択
+# 過去の訪問回数が多いほど選択候補の上に来る
+function percol_get_destination_from_history() {
+    sort ${CD_HISTORY_FILE} | uniq -c | sort -r | \
+        sed -e 's/^[ ]*[0-9]*[ ]*//' | \
+        sed -e s"/^${HOME//\//\\/}/~/" | \
+        percol | xargs echo
+}
+
+# percol を使って cd 履歴の中からディレクトリを選択し cd するウィジェット
+function percol_cd_history() {
+    local destination=$(percol_get_destination_from_history)
+    [ -n $destination ] && cd ${destination/#\~/${HOME}}
+    zle reset-prompt
+}
+zle -N percol_cd_history
+
+# percol を使って cd 履歴の中からディレクトリを選択し，現在のカーソル位置に挿入するウィジェット
+function percol_insert_history() {
+    local destination=$(percol_get_destination_from_history)
+    if [ $? -eq 0 ]; then
+        local new_left="${LBUFFER} ${destination} "
+        BUFFER=${new_left}${RBUFFER}
+        CURSOR=${#new_left}
+    fi
+    zle reset-prompt
+}
+zle -N percol_insert_history
+# }}}
+
+function exists { which $1 &> /dev/null }
+
+if exists percol; then
+    function percol_select_history() {
+        local tac
+        exists gtac && tac="gtac" || { exists tac && tac="tac" || { tac="tail -r" } }
+        BUFFER=$(history -n 1 | eval $tac | percol --query "$LBUFFER")
+        CURSOR=$#BUFFER         # move cursor
+        zle -R -c               # refresh
+    }
+
+    zle -N percol_select_history
+    bindkey '^x:' percol_select_history
+fi
 
 function wincmd() {
     cmd /C $@ | iconv -f cp932 -t utf-8

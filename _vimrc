@@ -116,6 +116,7 @@ nnoremap sO <C-w>=
 nnoremap sN :<C-u>bn<CR>
 nnoremap sP :<C-u>bp<CR>
 nnoremap st :<C-u>tabnew<CR>
+nnoremap sd :<C-u>tabnew<CR>:set filetype=drawit<CR>
 nnoremap sc :<C-u>tabc<CR>
 nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
@@ -139,7 +140,8 @@ if executable('ag')
   let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
   let g:unite_source_grep_recursive_opt = ''
 endif
-" let g:extra_whitespace_ignored_filetypes = ['unite', 'calendar']
+
+" let g:extra_whitespace_ignored_filetypes = ['unite', 'calendar', 'drawit']
 let g:better_whitespace_filetypes_blacklist=['unite', 'calendar', 'drawit']
 
 inoreabbrev <expr> /** "/**<CR>TODO(no comment)<CR>@author ".expand('$USER')."<CR>@param TODO(no comment)<CR>@return TODO(no comment)<CR>/"
