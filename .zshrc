@@ -1,7 +1,9 @@
 export LANG=ja_JP.UTF-8
 HISTFILE=$HOME/.zsh-history
-HISTSIZE=100000
-SAVEHIST=100000
+HISTSIZE=10000
+SAVEHIST=10000
+
+source ~/dotfiles/dotfiles_link.sh
 
 #パスの設定
 PATH=/usr/local/bin:$PATH
@@ -112,11 +114,17 @@ setopt correct
 echo Callme
 export PATH=$PATH:/usr/local/vim74/bin/
 export PATH=$PATH:~/java_wrapper
+export PATH=$PATH:~/bin/
 alias vim='/usr/local/vim74/bin/vim.exe'
 alias gnuplot='/cygdrive/c/Program\ Files\ \(x86\)/gnuplot/bin/gnuplot.exe'
+alias ec='explorer .'
+alias c='cygstart'
+alias excellkill='taskkill /IM EXCEL.exe /F'
+alias cubekill='taskkill /IM CubeSuiteW+.exe /F'
+alias vckill='taskkill /IM VCExpress.exe /F'
+alias pdfkill='taskkill /IM AcroRd32.exe /F'
 export TERM=xterm
 export PLANTUML_PATH="`cygpath -w \`which plantuml.jar\``"
-
 
 bindkey -v
 
@@ -128,7 +136,52 @@ add-zsh-hook chpwd chpwd_recent_dirs
 # エントリが多くなるとちょっぴり重い
 # https://github.com/zsh-users/zsh/blob/zsh-5.0.4/Functions/Chpwd/chpwd_recent_filehandler#L39
 # zstyle ':chpwd:*' recent-dirs-max 5000
-zstyle ':chpwd:*' recent-dirs-max 0
+zstyle ':chpwd:*' recent-dirs-max 500
 zstyle ':chpwd:*' recent-dirs-default yes
 zstyle ':completion:*' recent-dirs-insert both
+
+source ~/z.sh
+function percol_select_directory() {
+    local tac
+    if which tac > /dev/null; then
+        tac="tac"
+    else
+        tac="tail -r"
+    fi
+    local dest=$(_z -r 2>&1 | eval $tac | percol --query "$LBUFFER" | awk '{ print $2 }')
+    if [ -n "${dest}" ]; then
+        cd ${dest}
+    fi
+    zle reset-prompt
+}
+zle -N percol_select_directory
+bindkey "^X;" percol_select_directory
+
+# function percol_select_history() {
+#     local tac
+#     if which tac > /dev/null; then
+#         tac="tac"
+#     else
+#         tac="tail -r"
+#     fi
+#     BUFFER=$(fc -l -n 1 | eval $tac | percol --query "$LBUFFER")
+#     CURSOR=$#BUFFER             # move cursor
+#     zle -R -c                   # refresh
+# }
+# zle -N percol_select_history
+# bindkey "^X:" percol_select_history
+#
+# setopt hist_ignore_all_dups
+#
+# if (which zprof > /dev/null) ;then
+#   zprof | less
+# fi
+
+function wincmd() {
+    cmd /C $@ | iconv -f cp932 -t utf-8
+}
+
+function svnjk() {
+	svn log | sed -n '/jkobayashi/,/-----$/ p'
+}
 
