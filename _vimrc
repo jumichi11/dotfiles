@@ -11,7 +11,8 @@ set shiftwidth=4
 set autoindent
 set smartindent
 set nowrap
-set tags=./tags,../tags,../../tags,../../../tags,tags;
+" set tags=./tags,../tags,../../tags,../../../tags,tags;
+set tags=$AUDIO_ROOT/../../tags
 set fileencodings=
 set fileencodings=cp932,sjis,utf-8
 set fileformat=unix
@@ -26,7 +27,7 @@ endif
 set term=xterm
 set hlsearch
 set path +=./**
-set path +=~/**
+set path +=~/*
 set backspace=indent,eol,start
 set cursorline
 set noswapfile
@@ -46,7 +47,12 @@ noremap @ec :cd %:p:h<CR>:!explorer .<CR>
 noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
 noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
 noremap @cd :cd %:p:h<CR>
+noremap @wk :cd ~/work<CR>
 noremap @ub :Unite buffer -auto-resize<CR>
+noremap @uf :cd %:p:h<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.*'
+noremap @ufc :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.c'
+noremap @ufh :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.h'
+noremap @ur :Unite file_mru -auto-resize<CR>
 noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
 noremap @mk :!make<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
@@ -54,10 +60,15 @@ noremap @wb :VimwikiGoBackLink<CR>
 noremap @mk :cd %:p:h<CR>:make!<CR>
 noremap @tb :normal V<CR>:Tab /\|<CR>
 vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
+noremap @sj :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
+noremap @sja :cd $AUDIO_ROOT<CR>:normal st<CR>:r!svn log -v<CR>
+noremap @sjf :cd %:p:h<CR>:normal st<CR>:r!svn log -v %:p<CR>
+noremap @dir :cd %:p:h<CR>:pwd<CR>
+
 
 " Tab /| で、自動補正を開始するためのスクリプト
 inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
- 
+
 function! s:align()
   let p = '^\s*|\s.*\s|\s*$'
   if exists(':Tabularize') && getline('.') =~# '^\s*|' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
@@ -69,6 +80,12 @@ function! s:align()
   endif
 endfunction
 " Tab /| で、自動補正を開始するためのスクリプト、ここまで
+
+nnoremap @ud :<C-u>Unite
+      \ -start-insert -default-action=vimfiler
+      \ directory directory_mru directory_rec/async
+      \ <CR>
+
 
 noremap G Gzz
 noremap n nzz
@@ -107,6 +124,7 @@ nnoremap sq :<C-u>q<CR>
 nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
+nnoremap sd :<C-u>tabnew<CR>:set filetype=drawit<CR>
 
 " insert modeで開始
 let g:unite_enable_start_insert = 0
@@ -121,7 +139,8 @@ if executable('ag')
   let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
   let g:unite_source_grep_recursive_opt = ''
 endif
-let g:extra_whitespace_ignored_filetypes = ['unite', 'calendar']
+" let g:extra_whitespace_ignored_filetypes = ['unite', 'calendar']
+let g:better_whitespace_filetypes_blacklist=['unite', 'calendar', 'drawit']
 
 inoreabbrev <expr> /** "/**<CR>TODO(no comment)<CR>@author ".expand('$USER')."<CR>@param TODO(no comment)<CR>@return TODO(no comment)<CR>/"
 
@@ -150,6 +169,7 @@ augroup MY_AUTO_CMD
 	autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !asciidoc -a icons -b xhtml11 %:p'
 	autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
 	autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
+	autocmd BufWritePost,FileWritePost *.wiki execute 'Vimwiki2HTML'
 	autocmd BufRead,BufNewFile *.diag           set filetype=blockdiag
 	autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
 	" autocmd BufWritePost,FileWritePost *.wiki execute 'VimwikiAll2HTML'
@@ -166,7 +186,7 @@ augroup MY_AUTO_CMD
 	"asciidocファイルのテンプレート
 	autocmd BufNewFile *.asciidoc r ~/.asciidoc_templete
 	"行末の空白削除
-	autocmd BufWritePost,FileWritePost *.[ch] execute 'FixWhitespace'
+	" autocmd BufWritePost,FileWritePost *.[ch] execute 'FixWhitespace'
 augroup END
 
 "ctrlp キャッシュは削除しない
@@ -233,6 +253,9 @@ let g:session_autoload = 'yes'
 " 10分間に1回自動保存
 let g:session_autosave_periodic = 10
 
+"vimwiki設定
+let g:vimwiki_url_maxsave = 128
+let g:vimwiki_html_header_numbering = 2
 
 "quickhl
 nmap <Space>m <Plug>(quickhl-manual-this)
@@ -413,7 +436,8 @@ NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'scrooloose/nerdtree'
 
 " 行末の半角スペースを可視化
-NeoBundle 'bronson/vim-trailing-whitespace'
+" NeoBundle 'bronson/vim-trailing-whitespace'
+NeoBundle 'ntpeters/vim-better-whitespace'
 
 NeoBundle 't9md/vim-quickhl'
 NeoBundle 'kana/vim-smartinput'
@@ -473,6 +497,10 @@ NeoBundle 'tomtom/tcomment_vim'
 NeoBundle 'ruby-matchit'
 NeoBundle 'tpope/vim-endwise.git'
 NeoBundle 'thinca/vim-ref'
+NeoBundle 'tpope/vim-markdown'
+NeoBundle 'Shougo/neomru.vim'
+NeoBundle 'Shougo/vimfiler.vim'
+NeoBundle 'Drawit'
 call neobundle#end()
 filetype plugin indent on
 
@@ -484,4 +512,5 @@ let &t_Co=256
 colorscheme jellybean_gui
 
 set t_ut=
+
 
