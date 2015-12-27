@@ -1,6 +1,7 @@
 set noic
 set number
 set autoindent
+set autoread
 set showcmd
 "クリップボードをWindowsと連携
 set clipboard=unnamed
