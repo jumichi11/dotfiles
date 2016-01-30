@@ -40,35 +40,36 @@ set laststatus=2
 set undofile
 syntax on
 
-noremap @ne :NERDTreeToggle<CR>
-noremap @vs :VimShell<CR>
-noremap @qr :QuickRun<CR>
-noremap @en :EvervimNotebookList<CR>
-noremap @ec :cd %:p:h<CR>:!explorer .<CR>
+noremap @ac OAUDIO_PRINT(COMMAND, "%");<ESC>0f"a
 noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
-noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
+noremap @bd :bd!<CR>
 noremap @cd :cd %:p:h<CR>
-noremap @wk :cd ~/work<CR>
+noremap @dir :echo expand("%:p")<CR>
+noremap @en :EvervimNotebookList<CR>
+noremap @md :cd %:p:h<CR>:!cygstart .<CR><CR>
+noremap @mk :!make<CR>
+noremap @mk :cd %:p:h<CR>:make!<CR>
+noremap @ne :NERDTreeToggle<CR>
+noremap @pf :cd %:p:h<CR>:!svn diff % > %.patch<CR>
+noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
+noremap @qr :QuickRun<CR>
+noremap @sa :cd $AUDIO_ROOT<CR>:normal st<CR>:r!svn log -v<CR>
+noremap @sd :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
+noremap @sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
+noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
+noremap @tb :normal V<CR>:Tab /\|<CR>
 noremap @ub :Unite buffer -auto-resize<CR>
-noremap @uf :cd %:p:h<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.*'
-noremap @ufc :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.c'
-noremap @ufh :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.h'
+noremap @uc :cd %:p:h<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.*'
+noremap @uf :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.c'
 noremap @ur :Unite file_mru -auto-resize<CR>
 noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
-noremap @mk :!make<CR>
-noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
+noremap @vs :VimShell<CR>
 noremap @wb :VimwikiGoBackLink<CR>
-noremap @mk :cd %:p:h<CR>:make!<CR>
-noremap @tb :normal V<CR>:Tab /\|<CR>
+noremap @wk :cd ~/work<CR>
 vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
-noremap @sj :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
-noremap @sja :cd $AUDIO_ROOT<CR>:normal st<CR>:r!svn log -v<CR>
-noremap @sjf :cd %:p:h<CR>:normal st<CR>:r!svn log -v %:p<CR>
-noremap @dir :cd %:p:h<CR>:pwd<CR>
 
-
-" Tab /| で、自動補正を開始するためのスクリプト
-inoremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
+" Tab /| で、自動補正を開始するためのスmpクリプト
+noremap <silent> <Bar>   <Bar><Esc>:call <SID>align()<CR>a
 
 function! s:align()
   let p = '^\s*|\s.*\s|\s*$'
