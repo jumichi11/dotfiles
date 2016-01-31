@@ -129,6 +129,12 @@ nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
 nnoremap sd :<C-u>tabnew<CR>:set filetype=drawit<CR>
 
+"windowを開くと外部からのファイル変更確認
+augroup vimrc-checktime
+  autocmd!
+  autocmd WinEnter * checktime
+augroup END
+
 " insert modeで開始
 let g:unite_enable_start_insert = 0
 
