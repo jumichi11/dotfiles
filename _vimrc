@@ -40,7 +40,9 @@ set laststatus=2
 set undofile
 syntax on
 
-noremap @ac OAUDIO_PRINT(COMMAND, "%");<ESC>0f"a
+noremap @ac OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
+noremap @ad OAUDIO_PRINT_1DWORD(COMMAND, "%d", xxx);<ESC>0f"a
+noremap @ax OAUDIO_PRINT_1DWORD(COMMAND, "%x", xxx);<ESC>0f"a
 noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
 noremap @bd :bd!<CR>
 noremap @cd :cd %:p:h<CR>
@@ -54,9 +56,8 @@ noremap @pf :cd %:p:h<CR>:!svn diff % > %.patch<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
 noremap @qr :QuickRun<CR>
 noremap @sa :cd $AUDIO_ROOT<CR>:normal st<CR>:r!svn log -v<CR>
-noremap @sd :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
+noremap @sl :call SvnLog()<CR>
 noremap @sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
-noremap @st :cd %:p:h<CR>:!cygstart "%"<CR>
 noremap @tb :normal V<CR>:Tab /\|<CR>
 noremap @ub :Unite buffer -auto-resize<CR>
 noremap @uc :cd %:p:h<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.*'
@@ -171,6 +172,14 @@ function! IncludeGuard()
 	execute "normal! i#ifndef " . "_" . gatename . "_"
 	execute "normal! o#define " . "_" . gatename . "_"
 	execute "normal! Go#endif /* " . "_" . gatename . "_ */"
+endfunction
+
+function! SvnLog()
+	let _filename = expand('%')
+	echo _filename
+	tabnew
+	execute "r!svn log -v ". _filename
+	normal! gg
 endfunction
 
 augroup MY_AUTO_CMD
