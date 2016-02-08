@@ -60,13 +60,16 @@ noremap @sl :call SvnLog()<CR>
 noremap @sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
 noremap @tb :normal V<CR>:Tab /\|<CR>
 noremap @ub :Unite buffer -auto-resize<CR>
-noremap @uc :cd %:p:h<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.*'
-noremap @uf :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize -no-quit<CR><CR>'*.c'
+noremap @ud :cd ~/Document<CR>:Unite find -auto-resize -default-action=start<CR><CR>'*.*'
+noremap @uc :cd %:p:h<CR>:Unite find -auto-resize<CR><CR>'*.*'
+noremap @uf :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize<CR><CR>'*.c'
 noremap @ur :Unite file_mru -auto-resize<CR>
 noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
 noremap @vs :VimShell<CR>
 noremap @wb :VimwikiGoBackLink<CR>
 noremap @wk :cd ~/work<CR>
+noremap @fc :cd %:p:h<CR>:VimFiler<CR>
+noremap @fd :cd ~/Document<CR>:VimFiler .<CR>
 vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
 
 " Tab /| で、自動補正を開始するためのスmpクリプト
@@ -83,12 +86,6 @@ function! s:align()
   endif
 endfunction
 " Tab /| で、自動補正を開始するためのスクリプト、ここまで
-
-nnoremap @ud :<C-u>Unite
-      \ -start-insert -default-action=vimfiler
-      \ directory directory_mru directory_rec/async
-      \ <CR>
-
 
 noremap G Gzz
 noremap n nzz
@@ -135,6 +132,20 @@ augroup vimrc-checktime
   autocmd!
   autocmd WinEnter * checktime
 augroup END
+
+" unite.vim に action を追加する
+" unite-action start
+let start = {
+      \ 'description' : 'start {word}',
+      \ 'is_selectable' : 1,
+      \ }
+function! start.func(candidates)"{{{
+  for l:candidate in a:candidates
+    call system("cygstart ".l:candidate.action__path)
+  endfor
+endfunction"}}}
+call unite#custom_action('openable', 'start', start)
+unlet start
 
 " insert modeで開始
 let g:unite_enable_start_insert = 0
@@ -520,6 +531,8 @@ NeoBundle 'tpope/vim-markdown'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'Drawit'
+NeoBundle 'mattn/webapi-vim'
+
 call neobundle#end()
 filetype plugin indent on
 
