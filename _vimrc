@@ -45,9 +45,12 @@ noremap @ad OAUDIO_PRINT_1DWORD(COMMAND, "%d", xxx);<ESC>0f"a
 noremap @ax OAUDIO_PRINT_1DWORD(COMMAND, "%x", xxx);<ESC>0f"a
 noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
 noremap @bd :bd!<CR>
+noremap @bl :Unite bookmark -auto-resize<CR>
+noremap @bm :UniteBookmarkAdd<CR><CR><CR>
 noremap @cd :cd %:p:h<CR>
-noremap @dir :echo expand("%:p")<CR>
 noremap @en :EvervimNotebookList<CR>
+noremap @ff :VimFiler .<CR>
+noremap @fn :echo expand("%:p")<CR>
 noremap @md :cd %:p:h<CR>:!cygstart .<CR><CR>
 noremap @mk :!make<CR>
 noremap @mk :cd %:p:h<CR>:make!<CR>
@@ -144,7 +147,6 @@ function! start.func(candidates)"{{{
     call system("cygstart ".l:candidate.action__path)
   endfor
 endfunction"}}}
-call unite#custom_action('openable', 'start', start)
 unlet start
 
 " insert modeで開始
@@ -532,6 +534,7 @@ NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'Shougo/vimfiler.vim'
 NeoBundle 'Drawit'
 NeoBundle 'mattn/webapi-vim'
+NeoBundle 'tacroe/unite-mark'
 
 call neobundle#end()
 filetype plugin indent on
