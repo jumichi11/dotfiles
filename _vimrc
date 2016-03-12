@@ -44,16 +44,16 @@ noremap @ac OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
 noremap @ad OAUDIO_PRINT_1DWORD(COMMAND, "%d", xxx);<ESC>0f"a
 noremap @ax OAUDIO_PRINT_1DWORD(COMMAND, "%x", xxx);<ESC>0f"a
 noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
-noremap @bd :bd!<CR>
-noremap @bl :Unite bookmark -auto-resize<CR>
+noremap @bl :Unite bookmark -no-quit -auto-resize<CR>
 noremap @bm :UniteBookmarkAdd<CR><CR><CR>
 noremap @cd :cd %:p:h<CR>
+noremap @bd :bd!<CR>
 noremap @en :EvervimNotebookList<CR>
-noremap @ff :VimFiler .<CR>
+noremap @ff :VimFilerTab .<CR>
 noremap @fn :echo expand("%:p")<CR>
 noremap @md :cd %:p:h<CR>:!cygstart .<CR><CR>
-noremap @mk :!make<CR>
 noremap @mk :cd %:p:h<CR>:make!<CR>
+noremap @mm :Unite mark -no-quit -auto-resize<CR>
 noremap @ne :NERDTreeToggle<CR>
 noremap @pf :cd %:p:h<CR>:!svn diff % > %.patch<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
@@ -71,8 +71,6 @@ noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
 noremap @vs :VimShell<CR>
 noremap @wb :VimwikiGoBackLink<CR>
 noremap @wk :cd ~/work<CR>
-noremap @fc :cd %:p:h<CR>:VimFiler<CR>
-noremap @fd :cd ~/Document<CR>:VimFiler .<CR>
 vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
 
 " Tab /| で、自動補正を開始するためのスmpクリプト
@@ -247,6 +245,8 @@ let &t_SI .= "\e[<r"
 let &t_EI .= "\e[<s\e[<0t"
 let &t_te .= "\e[<0t\e[<s"
 
+"カーソル形状変更
+"TeraTermで設定→その他の設定→制御シーケンス→カーソル形状/形状変更制御シーケンスをOnとすること
 let &t_SI .= "\e[3 q"
 let &t_EI .= "\e[1 q"
 
@@ -281,7 +281,7 @@ let g:auto_ctags = 1
 " vimを辞める時に自動保存
 let g:session_autosave = 'yes'
 " 引数なしでvimを起動した時にsession保存ディレクトリのdefault.vimを開く
-let g:session_autoload = 'yes'
+" let g:session_autoload = 'yes'
 " 10分間に1回自動保存
 let g:session_autosave_periodic = 10
 
