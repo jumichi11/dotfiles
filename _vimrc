@@ -1,4 +1,6 @@
 set noic
+
+set hidden
 set number
 set autoindent
 set autoread
@@ -12,13 +14,12 @@ set shiftwidth=4
 set autoindent
 set smartindent
 set nowrap
-" set tags=./tags,../tags,../../tags,../../../tags,tags;
-set tags=$AUDIO_ROOT/../../tags
+set tags=$ROOT/tags
 set fileencodings=
 set fileencodings=cp932,sjis,utf-8
 set fileformat=unix
 "検索をファイルの先頭へループしない
-"(test)set nowrapscan
+set nowrapscan
 "閉じ括弧が入力されたとき、対応する括弧を表示する
 set showmatch
 set mouse=a
@@ -31,8 +32,9 @@ set path +=./**
 set path +=~/*
 set backspace=indent,eol,start
 set cursorline
-set noswapfile
 set nobackup
+set noswapfile
+set ignorecase
 set timeoutlen=500
 " ステータス行を表示(これをやらないと、1ウィンドウ1バッファだけのときに、ステータスラインが表示できない)
 set laststatus=2
@@ -40,39 +42,106 @@ set laststatus=2
 set undofile
 syntax on
 
-noremap @ac OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
-noremap @ad OAUDIO_PRINT_1DWORD(COMMAND, "%d", xxx);<ESC>0f"a
-noremap @ax OAUDIO_PRINT_1DWORD(COMMAND, "%x", xxx);<ESC>0f"a
-noremap @ag :cd %:p:h<CR>:Unite grep -no-quit -auto-resize<CR>
-noremap @bd :bd!<CR>
-noremap @bl :Unite bookmark -auto-resize<CR>
-noremap @bm :UniteBookmarkAdd<CR><CR><CR>
-noremap @cd :cd %:p:h<CR>
-noremap @en :EvervimNotebookList<CR>
-noremap @ff :VimFiler .<CR>
-noremap @fn :echo expand("%:p")<CR>
-noremap @md :cd %:p:h<CR>:!cygstart .<CR><CR>
-noremap @mk :!make<CR>
+let mapleader = "\<Space>"
+
+"AUDIO_PRINT文自動挿入
+noremap <Leader>pc OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
+noremap <Leader>pd OAUDIO_PRINT_1DWORD(COMMAND, "%d", xxx);<ESC>0f"a
+noremap <Leader>px OAUDIO_PRINT_1DWORD(COMMAND, "%x", xxx);<ESC>0f"a
+
+noremap <Leader>w :w!<CR>
+noremap <Leader>q :qa!<CR>
+
+"ag設定 検索バッファは保持する
+"また、3つ上の階層まではショートカット一発で検索設定できるようにする
+noremap <Leader>ag :Unite grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>
+noremap <Leader>ac :cd $ROOT/src<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>
+noremap <Leader>a0 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./<CR>
+noremap <Leader>a1 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./../<CR>
+noremap <Leader>a2 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./../../<CR>
+noremap <Leader>a3 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./../../../<CR>
+
+noremap <Leader>bl :Unite bookmark -no-quit -auto-resize<CR>
+noremap <Leader>bm :UniteBookmarkAdd<CR><CR><CR>
+
+"カレントフォルダの移動
+noremap <Leader>cd :cd %:p:h<CR>:pwd<CR>
+noremap <Leader>0 ::pwd<CR>
+noremap <Leader>1 :cd ..<CR>:pwd<CR>
+noremap <Leader>2 :cd ../..<CR>:pwd<CR>
+noremap <Leader>3 :cd ../../..<CR>:pwd<CR>
+noremap <Leader>wk :cd ~/work<CR>
+
+"ランダムにカラー変更
+noremap <Leader>co :call SetBgColor()<CR>
+
+"VimFiler起動
+noremap <Leader>vf :VimFilerSplit .<CR>
+
+"Unite系操作
+noremap <Leader>fr :Unite file_mru -auto-resize<CR>
+noremap <Leader>ff :Unite find -auto-resize -buffer-name=find-buffer<CR><CR>'*.[ch]'<CR>
+"Document検索は検索開始ディレクトリは固定
+noremap <Leader>fd :cd ~/Document<CR>:Unite find -auto-resize -default-action=start -buffer-name=doc-buffer<CR><CR>'*.*'<CR>
+noremap <Leader>fb :UniteResume
+noremap <Leader>fc :echo expand("%:p")<CR>
+noremap <Leader>fe :cd %:p:h<CR>:!cygstart .<CR><CR>
+noremap <Leader>fn :echo expand('%:p')<CR>
+noremap <Leader>fa :cd ~/Document<CR>:Unite find -auto-resize -buffer-name=doc-buffer<CR><CR>'*.*'<CR>
+
+"Helpを引く
+noremap <Leader>hh :Unite help -no-quit -tab<CR>
+noremap <Leader>hk :UniteWithCursorWord help -no-quit -tab<CR>
+
+"quickhlハイライト操作
+let g:quickhl_manual_enable_at_startup = 1
+nmap <Space>m <Plug>(quickhl-manual-this)
+xmap <Space>m <Plug>(quickhl-manual-this)
+nmap <Space>M <Plug>(quickhl-manual-reset)
+xmap <Space>M <Plug>(quickhl-manual-reset)
+
+"svn操作
+noremap <Leader>sp :cd %:p:h<CR>:!svn diff % > %.patch<CR>
+noremap <Leader>sa :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
+noremap <Leader>sl :call SvnLog()<CR>
+noremap <Leader>sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
+
+"各種計算
+noremap <Leader>bc :r!bc<CR>
+
+"Vimwiki
+noremap <Leader>wb :VimwikiGoBackLink<CR>
+let g:vimwiki_dir_link = 'index'
+
+"Vimwikiでvfile:でファイルを開く
+function! VimwikiLinkHandler(link)
+    " Use Vim to open external files with the 'vfile:' scheme.  E.g.:
+    "   1) [[vfile:~/Code/PythonProject/abc123.py]]
+    "   2) [[vfile:./|Wiki Home]]
+    let link = a:link
+    if link =~# '^vfile:'
+        let link = link[1:]
+    else
+        return 0
+    endif
+    let link_infos = vimwiki#base#resolve_link(link)
+    if link_infos.filename == ''
+        echomsg 'Vimwiki Error: Unable to resolve link!'
+        return 0
+    else
+        " exe 'tabnew ' . fnameescape(link_infos.filename)
+        echomsg fnameescape(link_infos.filename)
+        call system("cygstart ".fnameescape(link_infos.filename))
+        return 1
+    endif
+endfunction
+
 noremap @mk :cd %:p:h<CR>:make!<CR>
 noremap @ne :NERDTreeToggle<CR>
-noremap @pf :cd %:p:h<CR>:!svn diff % > %.patch<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
 noremap @qr :QuickRun<CR>
-noremap @sa :cd $AUDIO_ROOT<CR>:normal st<CR>:r!svn log -v<CR>
-noremap @sl :call SvnLog()<CR>
-noremap @sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
 noremap @tb :normal V<CR>:Tab /\|<CR>
-noremap @ub :Unite buffer -auto-resize<CR>
-noremap @ud :cd ~/Document<CR>:Unite find -auto-resize -default-action=start<CR><CR>'*.*'
-noremap @uc :cd %:p:h<CR>:Unite find -auto-resize<CR><CR>'*.*'
-noremap @uf :cd $AUDIO_ROOT/../../../..<CR>:Unite find -auto-resize<CR><CR>'*.c'
-noremap @ur :Unite file_mru -auto-resize<CR>
-noremap @ut :cd %:p:h<CR>:e ./TestCode/%:r_test.c<CR>:cd %:p:h<CR>
 noremap @vs :VimShell<CR>
-noremap @wb :VimwikiGoBackLink<CR>
-noremap @wk :cd ~/work<CR>
-noremap @fc :cd %:p:h<CR>:VimFiler<CR>
-noremap @fd :cd ~/Document<CR>:VimFiler .<CR>
 vnoremap @t= :S/\s+/ /g<CR>gv:Tab / /l0<CR>gv:Tab /\s*\zs=<CR>:normal gv=<CR>
 
 " Tab /| で、自動補正を開始するためのスmpクリプト
@@ -114,7 +183,7 @@ nnoremap sp gT
 nnoremap sr <C-w>r
 nnoremap s= <C-w>=
 nnoremap sw <C-w>w
-nnoremap so <C-w>_<C-w>|
+nnoremap so <C-w>_<C-w>|
 nnoremap sO <C-w>=
 nnoremap sN :<C-u>bn<CR>
 nnoremap sP :<C-u>bp<CR>
@@ -124,11 +193,8 @@ nnoremap sc :<C-u>tabc<CR>
 nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
 nnoremap sv :<C-u>vs<CR>
-nnoremap sq :<C-u>q<CR>
-nnoremap sQ :<C-u>bd<CR>
-nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
-nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
-nnoremap sd :<C-u>tabnew<CR>:set filetype=drawit<CR>
+nnoremap sq :<C-u>q!<CR>
+nnoremap sb :<C-u>bd!<CR>
 
 "windowを開くと外部からのファイル変更確認
 augroup vimrc-checktime
@@ -168,12 +234,10 @@ let g:better_whitespace_filetypes_blacklist=['unite', 'calendar', 'drawit']
 
 inoreabbrev <expr> /** "/**<CR>TODO(no comment)<CR>@author ".expand('$USER')."<CR>@param TODO(no comment)<CR>@return TODO(no comment)<CR>/"
 
-"neocomplcache
-let g:neocomplcache_enable_at_startup = 1
-
-"ctrlp キャッシュは削除しない
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
+" "neocomplcache
+" let g:neocomplcache_enable_at_startup = 1
+" 起動時に有効化
+let g:neocomplete#enable_at_startup = 1
 
 function! IncludeGuard()
 	let fl = getline(1)
@@ -199,6 +263,7 @@ augroup MY_AUTO_CMD
 	autocmd!
 	"asciidocファイル保存時、変換処理を起動する
 	autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !asciidoc -a icons -b xhtml11 %:p'
+	autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !cygstart %:r.html'
 	autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
 	autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
 	autocmd BufWritePost,FileWritePost *.wiki execute 'Vimwiki2HTML'
@@ -224,12 +289,6 @@ augroup END
 "ctrlp キャッシュは削除しない
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_cache_dir = $HOME.'/.cache/ctrlp'
-"quickhl
-nmap <Space>m <Plug>(quickhl-toggle)
-xmap <Space>m <Plug>(quickhl-toggle)
-nmap <Space>M <Plug>(quickhl-reset)
-xmap <Space>M <Plug>(quickhl-reset)
-nmap <Space>j <Plug>(quickhl-match)
 
 "neosnippet
 " Plugin key-mappings.
@@ -247,6 +306,8 @@ let &t_SI .= "\e[<r"
 let &t_EI .= "\e[<s\e[<0t"
 let &t_te .= "\e[<0t\e[<s"
 
+"カーソル形状変更
+"TeraTermで設定→その他の設定→制御シーケンス→カーソル形状/形状変更制御シーケンスをOnとすること
 let &t_SI .= "\e[3 q"
 let &t_EI .= "\e[1 q"
 
@@ -281,7 +342,7 @@ let g:auto_ctags = 1
 " vimを辞める時に自動保存
 let g:session_autosave = 'yes'
 " 引数なしでvimを起動した時にsession保存ディレクトリのdefault.vimを開く
-let g:session_autoload = 'yes'
+" let g:session_autoload = 'yes'
 " 10分間に1回自動保存
 let g:session_autosave_periodic = 10
 
@@ -289,264 +350,134 @@ let g:session_autosave_periodic = 10
 let g:vimwiki_url_maxsave = 128
 let g:vimwiki_html_header_numbering = 2
 
-"quickhl
-nmap <Space>m <Plug>(quickhl-manual-this)
-xmap <Space>m <Plug>(quickhl-manual-this)
-nmap <Space>M <Plug>(quickhl-manual-reset)
-xmap <Space>M <Plug>(quickhl-manual-reset)
+let g:airline_enable_branch = 0
+let g:airline_section_b = "%t %M"
+let g:airline_section_c = "%{fugitive#statusline()}"
+let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
+let g:airline_section_x =
+			\ "%{strlen(&fileformat)?&fileformat:''}".s:sep.
+			\ "%{strlen(&fenc)?&fenc:&enc}".s:sep.
+			\ "%{strlen(&filetype)?&filetype:'no ft'}"
+let g:airline_section_y = '%3p%%'
+let g:airline_section_z = get(g:, 'airline_linecolumn_prefix', '').'%3l:%-2v'
+let g:airline#extensions#whitespace#enabled = 0
+let g:airline_left_sep = ' '
+let g:airline_right_sep = ' '
 
-nmap <Space>j <Plug>(quickhl-cword-toggle)
-nmap <Space>] <Plug>(quickhl-tag-toggle)
-
-  let g:airline_enable_branch = 0
-  let g:airline_section_b = "%t %M"
-  let g:airline_section_c = "%{fugitive#statusline()}"
-  let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
-  let g:airline_section_x =
-        \ "%{strlen(&fileformat)?&fileformat:''}".s:sep.
-        \ "%{strlen(&fenc)?&fenc:&enc}".s:sep.
-        \ "%{strlen(&filetype)?&filetype:'no ft'}"
-  let g:airline_section_y = '%3p%%'
-  let g:airline_section_z = get(g:, 'airline_linecolumn_prefix', '').'%3l:%-2v'
-  let g:airline#extensions#whitespace#enabled = 0
-  let g:airline_left_sep = ' '
-  let g:airline_right_sep = ' '
-
-" set omnifunc=OmniSharp#Complete
-"
-" "if !exists('g:neocomplcache_force_omni_patterns')
-" "  let g:neocomplcache_force_omni_patterns = {}
-" "endif
-" "let g:neocomplcache_force_omni_patterns.cs = '[^.]\.\%(\u\{2,}\)\?'
-"
-" " OmniSharp won't work without this setting
-" filetype plugin on
-"
-" "This is the default value, setting it isn't actually necessary
-" let g:OmniSharp_host = "http://localhost:2000"
-"
-" "Set the type lookup function to use the preview window instead of the status line
-" "let g:OmniSharp_typeLookupInPreview = 1
-"
-" "Timeout in seconds to wait for a response from the server
-" let g:OmniSharp_timeout = 1
-"
-" "Showmatch significantly slows down omnicomplete
-" "when the first match contains parentheses.
-" set noshowmatch
-"
-" "Super tab settings - uncomment the next 4 lines
-" "let g:SuperTabDefaultCompletionType = 'context'
-" "let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
-" "let g:SuperTabDefaultCompletionTypeDiscovery = ["&omnifunc:<c-x><c-o>","&completefunc:<c-x><c-n>"]
-" "let g:SuperTabClosePreviewOnPopupClose = 1
-"
-" "don't autoselect first item in omnicomplete, show if only one item (for preview)
-" "remove preview if you don't want to see any documentation whatsoever.
-" set completeopt=longest,menuone,preview
-" " Fetch full documentation during omnicomplete requests.
-" " There is a performance penalty with this (especially on Mono)
-" " By default, only Type/Method signatures are fetched. Full documentation can still be fetched when
-" " you need it with the :OmniSharpDocumentation command.
-" " let g:omnicomplete_fetch_documentation=1
-"
-" "Move the preview window (code documentation) to the bottom of the screen, so it doesn't move the code!
-" "You might also want to look at the echodoc plugin
-" set splitbelow
-"
-" " Get Code Issues and syntax errors
-" let g:syntastic_cs_checkers = ['syntax', 'semantic', 'issues']
-"
-" augroup omnisharp_commands
-" 	autocmd!
-"
-" 	"Set autocomplete function to OmniSharp (if not using YouCompleteMe completion plugin)
-" 	autocmd FileType cs setlocal omnifunc=OmniSharp#Complete
-"
-" 	" Synchronous build (blocks Vim)
-" 	"autocmd FileType cs nnoremap <F5> :wa!<cr>:OmniSharpBuild<cr>
-" 	" Builds can also run asynchronously with vim-dispatch installed
-" 	autocmd FileType cs nnoremap <leader>b :wa!<cr>:OmniSharpBuildAsync<cr>
-" 	" automatic syntax check on events (TextChanged requires Vim 7.4)
-" 	autocmd BufEnter,TextChanged,InsertLeave *.cs SyntasticCheck
-"
-" 	" Automatically add new cs files to the nearest project on save
-" 	autocmd BufWritePost *.cs call OmniSharp#AddToProject()
-"
-" 	"show type information automatically when the cursor stops moving
-" 	autocmd CursorHold *.cs call OmniSharp#TypeLookupWithoutDocumentation()
-"
-" 	"The following commands are contextual, based on the current cursor position.
-"
-" 	autocmd FileType cs nnoremap gd :OmniSharpGotoDefinition<cr>
-" 	autocmd FileType cs nnoremap <leader>fi :OmniSharpFindImplementations<cr>
-" 	autocmd FileType cs nnoremap <leader>ft :OmniSharpFindType<cr>
-" 	autocmd FileType cs nnoremap <leader>fs :OmniSharpFindSymbol<cr>
-" 	autocmd FileType cs nnoremap <leader>fu :OmniSharpFindUsages<cr>
-" 	autocmd FileType cs nnoremap <leader>fm :OmniSharpFindMembers<cr> "finds members in the current buffer
-" 	" cursor can be anywhere on the line containing an issue
-" 	autocmd FileType cs nnoremap <leader>x  :OmniSharpFixIssue<cr>
-" 	autocmd FileType cs nnoremap <leader>fx :OmniSharpFixUsings<cr>
-" 	autocmd FileType cs nnoremap <leader>tt :OmniSharpTypeLookup<cr>
-" 	autocmd FileType cs nnoremap <leader>dc :OmniSharpDocumentation<cr>
-" 	autocmd FileType cs nnoremap <C-K> :OmniSharpNavigateUp<cr> "navigate up by method/property/field
-" 	autocmd FileType cs nnoremap <C-J> :OmniSharpNavigateDown<cr> "navigate down by method/property/field
-"
-" augroup END
-"
-"
-" " this setting controls how long to wait (in ms) before fetching type / symbol information.
-" set updatetime=500
-" " Remove 'Press Enter to continue' message when type information is longer than one line.
-" set cmdheight=2
-"
-" " Contextual code actions (requires CtrlP)
-" nnoremap <leader><space> :OmniSharpGetCodeActions<cr>
-" " Run code actions with text selected in visual mode to extract method
-" vnoremap <leader><space> :call OmniSharp#GetCodeActions('visual')<cr>
-"
-" " rename with dialog
-" nnoremap <leader>nm :OmniSharpRename<cr>
-" nnoremap <F2> :OmniSharpRename<cr>
-" " rename without dialog - with cursor on the symbol to rename... ':Rename newname'
-" command! -nargs=1 Rename :call OmniSharp#RenameTo("<args>")
-"
-" " Force OmniSharp to reload the solution. Useful when switching branches etc.
-" nnoremap <leader>rl :OmniSharpReloadSolution<cr>
-" nnoremap <leader>cf :OmniSharpCodeFormat<cr>
-" " Load the current .cs file to the nearest project
-" nnoremap <leader>tp :OmniSharpAddToProject<cr>
-"
-" " (Experimental - uses vim-dispatch or vimproc plugin) - Start the omnisharp server for the current solution
-" nnoremap <leader>ss :OmniSharpStartServer<cr>
-" nnoremap <leader>sp :OmniSharpStopServer<cr>
-"
-" " Add syntax highlighting for types and interfaces
-" nnoremap <leader>th :OmniSharpHighlightTypes<cr>
-" "Don't ask to save when changing buffers (i.e. when jumping to a type definition)
-set hidden
-
-set nocompatible
-filetype plugin indent off
-
-if has('vim_starting')
-	set runtimepath+=$VIMRUNTIME/bundle/neobundle.vim
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
 endif
 
-call neobundle#begin(expand('$VIMRUNTIME/bundle'))
+" Required:
+set runtimepath^=/home/jkobayashi/.cache/dein/repos/github.com/Shougo/dein.vim
 
-NeoBundleFetch 'Shougo/neobundle.vim'
+" Required:
+call dein#begin(expand('/home/jkobayashi/.cache/dein'))
 
-"以下は必要に応じて追加
-NeoBundle 'Shougo/vimproc', {
-			\ 'build' : {
-			\ 'windows' : 'make -f make_mingw32.mak',
-			\ 'cygwin' : 'make -f make_cygwin.mak',
-			\ 'mac' : 'make -f make_mac.mak',
-			\ 'unix' : 'make -f make_unix.mak',
-			\ },
-			\ }
+" Let dein manage dein
+" Required:
+call dein#add('Shougo/dein.vim')
 
-" NeoBundleLazy 'nosami/Omnisharp', {
-" 			\   'autoload': {'filetypes': ['cs']},
-" 			\   'build': {
-" 			\     'windows': 'MSBuild server/OmniSharp.sln',
-" 			\     'cygwin': 'MSBuild server/OmniSharp.sln',
-" 			\     'mac': 'xbuild server/OmniSharp.sln',
-" 			\     'unix': 'xbuild server/OmniSharp.sln',
-" 			\ }
-" 			\ }
-"OmniSharpに必要
-NeoBundle 'scrooloose/syntastic'
-NeoBundle 'tpope/vim-dispatch'
+" Add or remove your plugins here:
 
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neosnippet.vim'
-NeoBundle 'Shougo/neosnippet-snippets'
-NeoBundle 'Shougo/neocomplcache'
+call dein#add('Drawit')
+call dein#add('Shougo/neocomplete.vim')
+call dein#add('Shougo/neomru.vim')
+call dein#add('Shougo/neosnippet-snippets')
+call dein#add('Shougo/neosnippet.vim')
+call dein#add('Shougo/unite.vim')
+call dein#add('Shougo/vimfiler.vim')
+call dein#add('Shougo/vimproc.vim')
+call dein#add('Shougo/vimshell.vim')
+call dein#add('Shougo/unite-outline')
+call dein#add('adinapoli/vim-markmultiple')
+call dein#add('ag.vim')
+call dein#add('aklt/plantuml-syntax')
+call dein#add('aohta/blockdiag.vim')
+call dein#add('bling/vim-airline')
+" call dein#add('ciaranm/inkpot')
+call dein#add('cohama/agit.vim')
+" call dein#add('ctrlpvim/ctrlp.vim')
+call dein#add('dagwieers/asciidoc-vim')
+call dein#add('godlygeek/tabular')
+" call dein#add('itchyny/calendar.vim')
+call dein#add('junegunn/vim-easy-align')
+call dein#add('kana/vim-operator-user')
+call dein#add('kana/vim-smartchr')
+call dein#add('kana/vim-smartinput')
+" call dein#add('mattn/webapi-vim')
+call dein#add('nathanaelkane/vim-indent-guides')
+call dein#add('ngmy/vim-rubocop')
+call dein#add('ntpeters/vim-better-whitespace')
+call dein#add('othree/eregex.vim')
+call dein#add('rhysd/vim-clang-format')
+call dein#add('ruby-matchit')
+" call dein#add('scrooloose/nerdtree')
+call dein#add('scrooloose/syntastic')
+call dein#add('soramugi/auto-ctags.vim')
+call dein#add('t9md/vim-quickhl')
+" call dein#add('thinca/vim-ref')
+call dein#add('tomtom/tcomment_vim')
+call dein#add('tpope/vim-dispatch')
+call dein#add('tpope/vim-endwise.git')
+call dein#add('tpope/vim-fugitive')
+call dein#add('tpope/vim-markdown')
+call dein#add('tpope/vim-surround')
+call dein#add('tpope/vim-unimpaired')
+call dein#add('vcscommand.vim')
+call dein#add('vim-scripts/TagHighlight')
+call dein#add('vim-scripts/a.vim')
+call dein#add('vim-scripts/phd')
+call dein#add('vim-scripts/taglist.vim')
+call dein#add('vimwiki/vimwiki')
+call dein#add('tsukkee/unite-help')
+call dein#add('alpaca-tc/alpaca_tags')
+call dein#add('xolox/vim-misc')
+call dein#add('thinca/vim-quickrun')
+call dein#add('vim-scripts/ifdef-highlighting')
+call dein#add('xolox/vim-session', {
+			\ 'depends': ['xolox/vim-misc']})
 
-NeoBundle 'scrooloose/nerdtree'
+" Required:
+call dein#end()
 
-" 行末の半角スペースを可視化
-" NeoBundle 'bronson/vim-trailing-whitespace'
-NeoBundle 'ntpeters/vim-better-whitespace'
-
-NeoBundle 't9md/vim-quickhl'
-NeoBundle 'kana/vim-smartinput'
-NeoBundle 'kana/vim-smartchr'
-NeoBundle 'vim-scripts/TagHighlight'
-NeoBundle 'vim-scripts/taglist.vim'
-NeoBundle 'vim-scripts/a.vim'
-NeoBundle 'othree/eregex.vim'
-" NeoBundle 'osyo-manga/vim-over'
-NeoBundle 'Shougo/vimproc.vim'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'tpope/vim-surround'
-" NeoBundle 'visualmark.vim'
-NeoBundle 'thinca/vim-quickrun'
-NeoBundle 'aklt/plantuml-syntax'
-NeoBundle 'tpope/vim-unimpaired'
-NeoBundle 'nathanaelkane/vim-indent-guides'
-NeoBundle 'ctrlpvim/ctrlp.vim'
-NeoBundle 'rhysd/vim-clang-format'
-NeoBundle 'kana/vim-operator-user'
-NeoBundle 'soramugi/auto-ctags.vim'
-NeoBundle 'vim-scripts/guicolorscheme.vim'
-" NeoBundle 'altercation/vim-colors-solarized.vim'
-NeoBundle 'tpope/vim-pathogen.vim'
-NeoBundle 'Shougo/vimshell.vim'
-" NeoBundle 'kakkyz81/evervim'
-" NeoBundle 'ack.vim'
-NeoBundle 'ag.vim'
-" NeoBundle 'jacquesbh/vim-showmarks'
-" NeoBundle 'kannokanno/previm'
-NeoBundle 'adinapoli/vim-markmultiple'
-NeoBundle 'dagwieers/asciidoc-vim'
-" NeoBundle 'chikamichi/mediawiki.vim'
-NeoBundle 'vcscommand.vim'
-NeoBundle 'aohta/blockdiag.vim'
-NeoBundle 'jellybeans.vim'
-NeoBundle 'ciaranm/inkpot'
-NeoBundle 'vim-scripts/phd'
-" NeoBundle 'godlygeek/csapprox'
-NeoBundle 'xolox/vim-session', {
-            \ 'depends' : 'xolox/vim-misc',
-          \ }
-NeoBundle 'godlygeek/tabular'
-NeoBundle 'junegunn/vim-easy-align'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'cohama/agit.vim'
-NeoBundle 'vimwiki/vimwiki'
-NeoBundle 'itchyny/calendar.vim'
-NeoBundle 'tacroe/unite-mark'
-" NeoBundle 'mattn/googletranslate-vim'
-" NeoBundle 'translategoogle.vim'
-" NeoBundle 'mattn/webapi-vim'                                " 翻訳プラグインに必要
-" NeoBundle 'mattn/excitetranslate-vim'
-"ruby関連
-NeoBundle 'ngmy/vim-rubocop'
-NeoBundle 'tomtom/tcomment_vim'
-NeoBundle 'ruby-matchit'
-NeoBundle 'tpope/vim-endwise.git'
-NeoBundle 'thinca/vim-ref'
-NeoBundle 'tpope/vim-markdown'
-NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'Shougo/vimfiler.vim'
-NeoBundle 'Drawit'
-NeoBundle 'mattn/webapi-vim'
-NeoBundle 'tacroe/unite-mark'
-
-call neobundle#end()
+" Required:
 filetype plugin indent on
 
-NeoBundleCheck
+" If you want to install not installed plugins on startup.
+if dein#check_install()
+  call dein#install()
+endif
+
+"End dein Scripts-------------------------
 
 set grepprg=grep\ -nH
 
 let &t_Co=256
 colorscheme jellybean_gui
+syntax on
 
 set t_ut=
 
-" test
+"乱数生成
+function! SetBgColor()
+		execute 'colorscheme badwolf_gui'
+	" let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
+	" let rand = reltimestr(reltime())[l:match_end : ] % (10 + 1)
+	" if rand == 0
+	" 	execute 'colorscheme inkpot_gui'
+	" elseif rand == 1
+	" 	execute 'colorscheme jellybean_gui'
+	" elseif rand == 2
+	" 	execute 'colorscheme Tomorrow-Night-Blue_gui'
+	" elseif rand == 3
+	" 	execute 'colorscheme atmo-dark-256_gui'
+	" elseif rand == 4
+	" 	execute 'colorscheme badwolf_gui'
+	" else
+	" 	execute 'colorscheme Tomorrow-Night-Blue_gui'
+	" endif
+endfunction
+
 
