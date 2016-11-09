@@ -137,6 +137,7 @@ function! VimwikiLinkHandler(link)
 endfunction
 
 noremap @mk :cd %:p:h<CR>:make!<CR>
+noremap @mm :Unite mark -no-quit -auto-resize<CR>
 noremap @ne :NERDTreeToggle<CR>
 noremap @pv :cd %:p:h<CR>:!cygstart "%:r.html"<CR>
 noremap @qr :QuickRun<CR>
