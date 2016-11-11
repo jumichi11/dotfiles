@@ -44,6 +44,11 @@ syntax on
 
 let mapleader = "\<Space>"
 
+let $ROOT_2017RCV = "~/Develop/2017RCV/trunk/src"
+let $ROOT_2016RCV = "~/Develop/2016RCV/branch/AVR/Entry_MP/src""
+let $ROOT_2016Bar = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/src"
+let $ROOT_2016Slim = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR/src"
+
 "AUDIO_PRINT文自動挿入
 noremap <Leader>pc OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
 noremap <Leader>pd OAUDIO_PRINT_1DWORD(COMMAND, "%d", xxx);<ESC>0f"a
@@ -111,6 +116,10 @@ noremap <Leader>bc :r!bc<CR>
 
 "Vimwiki
 noremap <Leader>wb :VimwikiGoBackLink<CR>
+noremap <Leader>wi :normal! i{{file:///C:/cygwin64/home/jkobayashi/vimwiki_html/images/#####.png}}<CR>
+noremap <Leader>wp :!cygstart  ~/vimwiki_html/その他/%:r.html<CR>
+noremap <Leader>wb :VimwikiGoBackLink<CR>
+
 let g:vimwiki_dir_link = 'index'
 
 "Vimwikiでvfile:でファイルを開く
