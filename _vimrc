@@ -1,5 +1,5 @@
 set noic
-
+set nocompatible
 set hidden
 set number
 set autoindent
@@ -44,7 +44,7 @@ syntax on
 
 let mapleader = "\<Space>"
 
-let $ROOT_2017RCV = "~/Develop/2017RCV/trunk/src"
+let $ROOT_2017RCV = "~/Develop/2017RCV/branch/AVR_Entry/trunk/src"
 let $ROOT_2016RCV = "~/Develop/2016RCV/branch/AVR/Entry_MP/src""
 let $ROOT_2016Bar = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/src"
 let $ROOT_2016Slim = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR/src"
@@ -55,6 +55,7 @@ noremap <Leader>pd OAUDIO_PRINT_1DWORD(COMMAND, "%d", xxx);<ESC>0f"a
 noremap <Leader>px OAUDIO_PRINT_1DWORD(COMMAND, "%x", xxx);<ESC>0f"a
 
 noremap <Leader>w :w!<CR>
+noremap <Leader>r :w!<CR>:QuickRun<CR>
 noremap <Leader>q :qa!<CR>
 
 "ag設定 検索バッファは保持する
@@ -116,11 +117,23 @@ noremap <Leader>bc :r!bc<CR>
 
 "Vimwiki
 noremap <Leader>wb :VimwikiGoBackLink<CR>
-noremap <Leader>wi :normal! i{{file:///C:/cygwin64/home/jkobayashi/vimwiki_html/images/#####.png}}<CR>
-noremap <Leader>wp :!cygstart  ~/vimwiki_html/その他/%:r.html<CR>
+noremap <Leader>wI :normal! i{{file:///C:/cygwin64/home/jkobayashi/vimwiki_html/images/#####.png}}<CR>
+noremap <Leader>wp :call VimwikiHtmlPreview_()<CR>
 noremap <Leader>wb :VimwikiGoBackLink<CR>
 
+"クリップボード動作
+vnoremap <Leader>pc :w !cat > /dev/clipboard<CR>
+noremap <Leader>pp :r !cat /dev/clipboard<CR>
+
 let g:vimwiki_dir_link = 'index'
+
+function! VimwikiHtmlPreview_()
+	let curr_file_path = expand("%:p")
+	let html_path = substitute(curr_file_path, '\.wiki', '\.html', "g")
+	let html_path = substitute(html_path, "vimwiki", "vimwiki_html", "g")
+	echo html_path
+	execute "!cygstart " . html_path
+endfunction
 
 "Vimwikiでvfile:でファイルを開く
 function! VimwikiLinkHandler(link)
