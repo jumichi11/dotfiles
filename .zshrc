@@ -8,6 +8,7 @@ source ~/dotfiles/dotfiles_link.sh
 #ÉpÉXÇÃê›íË
 PATH=/usr/local/bin:$PATH
 PATH=~/bin:$PATH
+PATH=/cygdrive/c/Program\ Files\ \(x86\)/Google/Chrome/Application:$PATH
 export MANPATH=/usr/local/share/man:/usr/local/man:/usr/share/man
 
 # some more ls aliases

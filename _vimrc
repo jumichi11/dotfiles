@@ -14,7 +14,7 @@ set shiftwidth=4
 set autoindent
 set smartindent
 set nowrap
-set tags=$ROOT/tags
+set tags=$ROOT/tags,./tags
 set fileencodings=
 set fileencodings=cp932,sjis,utf-8
 set fileformat=unix
@@ -44,10 +44,13 @@ syntax on
 
 let mapleader = "\<Space>"
 
-let $ROOT_2017RCV = "~/Develop/2017RCV/branch/AVR_Entry/trunk/src"
-let $ROOT_2016RCV = "~/Develop/2016RCV/branch/AVR/Entry_MP/src""
-let $ROOT_2016Bar = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/src"
-let $ROOT_2016Slim = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR/src"
+let ROOT_2017RCV = "~/Develop/2017RCV/branch/AVR_Entry/trunk/"
+let ROOT_2016RCV = "~/Develop/2016RCV/branch/AVR/Entry_MP/""
+let ROOT_2016Mid = "~/Develop/2016RCV/branch/AVR/Mid_MP/""
+let ROOT_2016Bar = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/"
+let ROOT_2016Slim = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR/"
+
+noremap <Leader>rt :let $ROOT = ROOT_
 
 "AUDIO_PRINT文自動挿入
 noremap <Leader>pc OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
@@ -86,7 +89,7 @@ noremap <Leader>vf :VimFilerSplit .<CR>
 
 "Unite系操作
 noremap <Leader>fr :Unite file_mru -auto-resize<CR>
-noremap <Leader>ff :Unite find -auto-resize -buffer-name=find-buffer<CR><CR>'*.[ch]'<CR>
+noremap <Leader>ff :cd $ROOT/src<CR>:Unite find -auto-resize -buffer-name=find-buffer<CR><CR>'*.[ch]'<CR>
 "Document検索は検索開始ディレクトリは固定
 noremap <Leader>fd :cd ~/Document<CR>:Unite find -auto-resize -default-action=start -buffer-name=doc-buffer<CR><CR>'*.*'<CR>
 noremap <Leader>fb :UniteResume
@@ -96,6 +99,7 @@ noremap <Leader>fn :echo expand('%:p')<CR>
 noremap <Leader>fa :cd ~/Document<CR>:Unite find -auto-resize -buffer-name=doc-buffer<CR><CR>'*.*'<CR>
 
 "Helpを引く
+" noremap <Leader>hh :Unite help -no-quit -tab<CR>
 noremap <Leader>hh :Unite help -no-quit -tab<CR>
 noremap <Leader>hk :UniteWithCursorWord help -no-quit -tab<CR>
 
