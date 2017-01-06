@@ -119,6 +119,19 @@ noremap <Leader>sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
 "各種計算
 noremap <Leader>bc :r!bc<CR>
 
+function! ScilexExecute()
+	let curfile = expand("%")
+	let winpath = system("cygpath -w " . curfile)
+	let winpath = substitute(winpath, "\n", "", "g")
+	execute("!Scilex -nw -f " . "\"" . winpath . "\"")
+endfunction
+
+"Scilabマクロ
+noremap <Leader>ci :call ScilexExecute()<CR>
+
+"c#実行マクロ
+noremap <Leader>cs :!csc %<CR>:execute('!./'.expand("%:r")."\.exe")<CR>
+
 "Vimwiki
 noremap <Leader>wb :VimwikiGoBackLink<CR>
 noremap <Leader>wI :normal! i{{file:///C:/cygwin64/home/jkobayashi/vimwiki_html/images/#####.png}}<CR>
