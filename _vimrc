@@ -49,6 +49,7 @@ let ROOT_2016RCV = "~/Develop/2016RCV/branch/AVR/Entry_MP/""
 let ROOT_2016Mid = "~/Develop/2016RCV/branch/AVR/Mid_MP/""
 let ROOT_2016Bar = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/"
 let ROOT_2016Slim = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR/"
+let ROOT_csharp = "~/csharp_project/"
 
 noremap <Leader>rt :let $ROOT = ROOT_
 
@@ -130,7 +131,8 @@ endfunction
 noremap <Leader>ci :call ScilexExecute()<CR>
 
 "c#実行マクロ
-noremap <Leader>cs :!csc %<CR>:execute('!./'.expand("%:r")."\.exe")<CR>
+noremap <Leader>ce :!wincmd.sh csc *.cs<CR>:execute('!./'.expand("%:r")."\.exe")<CR>
+noremap <Leader>cs :!wincmd.sh csc *.cs<CR>
 
 "Vimwiki
 noremap <Leader>wb :VimwikiGoBackLink<CR>
