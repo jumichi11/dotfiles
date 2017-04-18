@@ -44,14 +44,27 @@ syntax on
 
 let mapleader = "\<Space>"
 
-let ROOT_2017RCV = "~/Develop/2017RCV/branch/AVR_Entry/trunk/"
-let ROOT_2016RCV = "~/Develop/2016RCV/branch/AVR/Entry_MP/""
-let ROOT_2016Mid = "~/Develop/2016RCV/branch/AVR/Mid_MP/""
-let ROOT_2016Bar = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/"
-let ROOT_2016Slim = "~/Develop/2016RCV/branch/SLIM_BAR/SLIM_BAR/"
+"以下、開発環境によってカスタマイズ
+let ROOT_2017RCV = "~/Dev/2017RCV/branch/AVR_Entry/trunk/"
+let ROOT_2017RCV_Mid = "~/Dev/2017RCV/branch/AVR_Mid/trunk/"
+let ROOT_2017RCV_High = "~/Dev/2017RCV/branch/AVR_High/trunk/"
+let ROOT_2017Duet = "~/Dev/2017RCV/branch/AVR_Entry/branch/Duet_Dev"
+let ROOT_2017CR = "~/Dev/2017RCV/branch/CR_N775/trunk"
+let ROOT_2016RCV = "~/Dev/2016RCV/branch/AVR/Entry_MP/"
+let ROOT_2016Mid = "~/Dev/2016RCV/branch/AVR/Mid_MP/"
+let ROOT_2016Bar = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/"
+let ROOT_2016Slim = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR/"
 let ROOT_csharp = "~/csharp_project/"
 
 noremap <Leader>rt :let $ROOT = ROOT_
+noremap <Leader>rr :echo $ROOT<CR>
+
+"以下、開発環境によってカスタマイズ
+noremap <Leader>td :set tags=~/Dev/2017RCV/branch/AVR_Entry/branch/Duet_Dev/src/tags<CR>
+noremap <Leader>tb :set tags=~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/tags/src/tags<CR>
+noremap <Leader>te :set tags=~/Dev/2017RCV/branch/AVR_Entry/trunk/src/tags<CR>
+noremap <Leader>tc :set tags=~/Dev/2017RCV/branch/CR_N775/trunk/src/tags<CR>
+noremap <Leader>tt :set tags<CR>
 
 "AUDIO_PRINT文自動挿入
 noremap <Leader>pc OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
@@ -64,12 +77,12 @@ noremap <Leader>q :qa!<CR>
 
 "ag設定 検索バッファは保持する
 "また、3つ上の階層まではショートカット一発で検索設定できるようにする
-noremap <Leader>ag :Unite grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>
-noremap <Leader>ac :cd $ROOT/src<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>
-noremap <Leader>a0 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./<CR>
-noremap <Leader>a1 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./../<CR>
-noremap <Leader>a2 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./../../<CR>
-noremap <Leader>a3 :cd %:p:h<CR>:UniteWithCursorWord grep -no-quit -auto-resize -buffer-name=grep-buffer<CR>./../../../<CR>
+noremap <Leader>ag :Unite grep -auto-resize -buffer-name=grep-buffer<CR>
+noremap <Leader>ar :cd $ROOT/src<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>
+noremap <Leader>a0 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./<CR>
+noremap <Leader>a1 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../<CR>
+noremap <Leader>a2 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../../<CR>
+noremap <Leader>a3 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../../../<CR>
 
 noremap <Leader>bl :Unite bookmark -no-quit -auto-resize<CR>
 noremap <Leader>bm :UniteBookmarkAdd<CR><CR><CR>
@@ -86,7 +99,7 @@ noremap <Leader>wk :cd ~/work<CR>
 noremap <Leader>co :call SetBgColor()<CR>
 
 "VimFiler起動
-noremap <Leader>vf :VimFilerSplit .<CR>
+noremap <Leader>vf :cd %:p:h<CR>:VimFilerSplit -winwidth=50 -no-quit .<CR>
 
 "Unite系操作
 noremap <Leader>fr :Unite file_mru -auto-resize<CR>
@@ -94,6 +107,7 @@ noremap <Leader>ff :cd $ROOT/src<CR>:Unite find -auto-resize -buffer-name=find-b
 "Document検索は検索開始ディレクトリは固定
 noremap <Leader>fd :cd ~/Document<CR>:Unite find -auto-resize -default-action=start -buffer-name=doc-buffer<CR><CR>'*.*'<CR>
 noremap <Leader>fb :UniteResume
+noremap <Leader>bf :Unite file buffer<CR>
 noremap <Leader>fc :echo expand("%:p")<CR>
 noremap <Leader>fe :cd %:p:h<CR>:!cygstart .<CR><CR>
 noremap <Leader>fn :echo expand('%:p')<CR>
@@ -117,6 +131,13 @@ noremap <Leader>sa :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
 noremap <Leader>sl :call SvnLog()<CR>
 noremap <Leader>sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
 
+let g:tcomment_types = {
+      \'c_to_cpp_surround' : "// %s",
+\}
+" マッピングを追加
+nmap <Leader>gc :TCommentAs c_to_cpp_surround<CR>
+vmap <Leader>gc :TCommentAs c_to_cpp_surround<CR>
+
 "各種計算
 noremap <Leader>bc :r!bc<CR>
 
@@ -131,8 +152,8 @@ endfunction
 noremap <Leader>ci :call ScilexExecute()<CR>
 
 "c#実行マクロ
-noremap <Leader>ce :!wincmd.sh csc *.cs<CR>:execute('!./'.expand("%:r")."\.exe")<CR>
-noremap <Leader>cs :!wincmd.sh csc *.cs<CR>
+noremap <Leader>ce :cd %:p:h<CR>:!wincmd.sh csc *.cs<CR>:execute('!./'.expand("%:r")."\.exe")<CR>
+noremap <Leader>cs :cd %:p:h<CR>:!wincmd.sh csc *.cs<CR>
 
 "Vimwiki
 noremap <Leader>wb :VimwikiGoBackLink<CR>
@@ -154,6 +175,12 @@ function! VimwikiHtmlPreview_()
 	execute "!cygstart " . html_path
 endfunction
 
+
+" erubyのときだけ設定を追加
+au FileType eruby call SetErubyMapping2()
+" phpのときだけ設定を追加
+au FileType php nmap <buffer><C-_>c :TCommentAs php_surround<CR>
+au FileType php vmap <buffer><C-_>c :TCommentAs php_surround<CR>
 "Vimwikiでvfile:でファイルを開く
 function! VimwikiLinkHandler(link)
     " Use Vim to open external files with the 'vfile:' scheme.  E.g.:
@@ -267,7 +294,7 @@ let g:unite_enable_smart_case = 1
 " unite grep に ag(The Silver Searcher) を使う
 if executable('ag')
   let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column -cc'
   let g:unite_source_grep_recursive_opt = ''
 endif
 
@@ -431,7 +458,7 @@ call dein#add('Shougo/neosnippet.vim')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/vimfiler.vim')
 call dein#add('Shougo/vimproc.vim')
-call dein#add('Shougo/vimshell.vim')
+" call dein#add('Shougo/vimshell.vim')
 call dein#add('Shougo/unite-outline')
 call dein#add('adinapoli/vim-markmultiple')
 call dein#add('ag.vim')

@@ -1,0 +1,11 @@
+#!/usr/bin/bash.exe
+
+for file in `find . -name '*.asciidoc'` ; do
+	asciidoc -a icons -b xhtml11 $file
+done
+
+find . -name "*.html" | cut -d'.' -f2 | cut -c2- | xargs -I {} pandoc -s -S {}.html -t mediawiki -o {}.wiki
+find . -name "*.html" | cut -d'.' -f2 | cut -c2- | xargs -I {} pandoc {}.html -t docx --reference-docx=`cygpath -w ~/.pandoc/reference.docx` -o {}.docx
+find . -name "*.html" | cut -d'.' -f2 | cut -c2- | xargs -I {} wkhtmltopdf.exe {}.html {}.pdf
+
+
