@@ -54,6 +54,7 @@ let ROOT_2016RCV = "~/Dev/2016RCV/branch/AVR/Entry_MP/"
 let ROOT_2016Mid = "~/Dev/2016RCV/branch/AVR/Mid_MP/"
 let ROOT_2016Bar = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/"
 let ROOT_2016Slim = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR/"
+let ROOT_2016Slim_Update = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM5CH_MP"
 let ROOT_csharp = "~/csharp_project/"
 
 noremap <Leader>rt :let $ROOT = ROOT_
@@ -78,7 +79,8 @@ noremap <Leader>q :qa!<CR>
 "ag設定 検索バッファは保持する
 "また、3つ上の階層まではショートカット一発で検索設定できるようにする
 noremap <Leader>ag :Unite grep -auto-resize -buffer-name=grep-buffer<CR>
-noremap <Leader>ar :cd $ROOT/src<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>
+noremap <Leader>ac :cd $ROOT/src<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>
+noremap <Leader>ar :cd $ROOT/src<CR>:Unite grep -auto-resize -buffer-name=grep-buffer<CR>
 noremap <Leader>a0 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./<CR>
 noremap <Leader>a1 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../<CR>
 noremap <Leader>a2 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../../<CR>
@@ -294,7 +296,7 @@ let g:unite_enable_smart_case = 1
 " unite grep に ag(The Silver Searcher) を使う
 if executable('ag')
   let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column -cc'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
   let g:unite_source_grep_recursive_opt = ''
 endif
 
@@ -320,12 +322,19 @@ function! IncludeGuard()
 	execute "normal! Go#endif /* " . "_" . gatename . "_ */"
 endfunction
 
+" function! SvnLog()
+" 	let _filename = expand('%')
+" 	echo _filename
+" 	tabnew
+" 	execute "r!svn log -v ". _filename
+" 	normal! gg
+" endfunction
 function! SvnLog()
-	let _filename = expand('%')
-	echo _filename
-	tabnew
-	execute "r!svn log -v ". _filename
-	normal! gg
+	let curfile = expand("%:p")
+	let winpath = system("cygpath -w " . curfile)
+	let winpath = substitute(winpath, '\n', '', 'g')
+	let command = "!TortoiseProc.exe /command:log /path:" . "\"" . winpath . "\""
+	execute command
 endfunction
 
 augroup MY_AUTO_CMD
