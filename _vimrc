@@ -57,15 +57,28 @@ let ROOT_2016Slim = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR/"
 let ROOT_2016Slim_Update = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM5CH_MP"
 let ROOT_csharp = "~/csharp_project/"
 
+"translategoogleの翻訳元と翻訳後の設定
+let g:translategoogle_default_sl = 'ja'
+let g:translategoogle_default_tl = 'en'
+
 noremap <Leader>rt :let $ROOT = ROOT_
 noremap <Leader>rr :echo $ROOT<CR>
 
-"以下、開発環境によってカスタマイズ
-noremap <Leader>td :set tags=~/Dev/2017RCV/branch/AVR_Entry/branch/Duet_Dev/src/tags<CR>
-noremap <Leader>tb :set tags=~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/tags/src/tags<CR>
-noremap <Leader>te :set tags=~/Dev/2017RCV/branch/AVR_Entry/trunk/src/tags<CR>
-noremap <Leader>tc :set tags=~/Dev/2017RCV/branch/CR_N775/trunk/src/tags<CR>
-noremap <Leader>tt :set tags<CR>
+noremap <Leader>tt :call SetTagSearchRoot()<CR>:set tags<CR>
+noremap <Leader>ts :tsel<CR>
+
+noremap <C-]> :call ExecuteTagJump()<CR>
+
+function! ExecuteTagJump()
+	let word = expand("<cword>")
+	execute "tag " . word
+	execute "tsel"
+endfunction
+
+function! SetTagSearchRoot()
+	let curfile = expand("$ROOT")
+	execute "set tags=" . curfile . "/tags"
+endfunction
 
 "AUDIO_PRINT文自動挿入
 noremap <Leader>pc OAUDIO_PRINT(COMMAND, "");<ESC>0f"a
@@ -131,7 +144,8 @@ xmap <Space>M <Plug>(quickhl-manual-reset)
 noremap <Leader>sp :cd %:p:h<CR>:!svn diff % > %.patch<CR>
 noremap <Leader>sa :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
 noremap <Leader>sl :call SvnLog()<CR>
-noremap <Leader>sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
+noremap <Leader>sr :call SvnRootLog()<CR>
+" noremap <Leader>sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
 
 let g:tcomment_types = {
       \'c_to_cpp_surround' : "// %s",
@@ -296,7 +310,7 @@ let g:unite_enable_smart_case = 1
 " unite grep に ag(The Silver Searcher) を使う
 if executable('ag')
   let g:unite_source_grep_command = 'ag'
-  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --search-binary'
   let g:unite_source_grep_recursive_opt = ''
 endif
 
@@ -331,10 +345,20 @@ endfunction
 " endfunction
 function! SvnLog()
 	let curfile = expand("%:p")
+	" let curfile = expand("$ROOT")
 	let winpath = system("cygpath -w " . curfile)
 	let winpath = substitute(winpath, '\n', '', 'g')
-	let command = "!TortoiseProc.exe /command:log /path:" . "\"" . winpath . "\""
-	execute command
+	let command = "!TortoiseProc.exe /command:log /path:" . "\"" . winpath . "\"" . " &"
+	execute(command)
+endfunction
+
+function! SvnRootLog()
+	" let curfile = expand("%:p")
+	let curfile = expand("$ROOT")
+	let winpath = system("cygpath -w " . curfile)
+	let winpath = substitute(winpath, '\n', '', 'g')
+	let command = "!TortoiseProc.exe /command:log /path:" . "\"" . winpath . "\"" . " &"
+	execute(command)
 endfunction
 
 augroup MY_AUTO_CMD
@@ -428,9 +452,11 @@ let g:session_autosave_periodic = 10
 let g:vimwiki_url_maxsave = 128
 let g:vimwiki_html_header_numbering = 2
 
+"airline設定
 let g:airline_enable_branch = 0
 let g:airline_section_b = "%t %M"
-let g:airline_section_c = "%{fugitive#statusline()}"
+" let g:airline_section_c = "%{fugitive#statusline()}"
+let g:airline_section_c = "%{expand($ROOT)}"
 let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
 let g:airline_section_x =
 			\ "%{strlen(&fileformat)?&fileformat:''}".s:sep.
@@ -516,6 +542,7 @@ call dein#add('thinca/vim-quickrun')
 call dein#add('vim-scripts/ifdef-highlighting')
 call dein#add('xolox/vim-session', {
 			\ 'depends': ['xolox/vim-misc']})
+call dein#add('daisuzu/translategoogle.vim')
 
 " Required:
 call dein#end()
