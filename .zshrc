@@ -117,7 +117,9 @@ echo Callme
 export PATH=$PATH:/usr/local/vim74/bin/
 export PATH=$PATH:~/java_wrapper
 export PATH=$PATH:~/bin/
+export GOPATH=c:/cygwin64/home/jkobayashi/Dev/Go
 alias vim='~/local/bin/vim.exe'
+alias go='/cygdrive/c/Go/bin/go.exe'
 alias ec='explorer .'
 alias gnuplot='/cygdrive/c/Program\ Files\ \(x86\)/gnuplot/bin/gnuplot.exe'
 alias ec='explorer .'

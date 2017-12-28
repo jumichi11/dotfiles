@@ -14,7 +14,6 @@ set shiftwidth=4
 set autoindent
 set smartindent
 set nowrap
-set tags=$ROOT/tags,./tags
 set fileencodings=
 set fileencodings=cp932,sjis,utf-8
 set fileformat=unix
@@ -28,8 +27,6 @@ if has('mac')
 endif
 set term=xterm
 set hlsearch
-set path +=./**
-set path +=~/*
 set backspace=indent,eol,start
 set cursorline
 set nobackup
@@ -42,9 +39,15 @@ set laststatus=2
 set undofile
 syntax on
 
+let $VIMWIKI_ROOT = "~/vimwiki"
+
+nnoremap tj :exe("tjump ".expand('<cword>'))<CR>
+
 let mapleader = "\<Space>"
 
 "以下、開発環境によってカスタマイズ
+let ROOT_2013RCV = "~/Dev/2013RCV/"
+let ROOT_2018RCV = "~/Dev/2018RCV/AVR_Light/trunk"
 let ROOT_2017RCV = "~/Dev/2017RCV/branch/AVR_Entry/trunk/"
 let ROOT_2017RCV_Mid = "~/Dev/2017RCV/branch/AVR_Mid/trunk/"
 let ROOT_2017RCV_High = "~/Dev/2017RCV/branch/AVR_High/trunk/"
@@ -52,22 +55,26 @@ let ROOT_2017Duet = "~/Dev/2017RCV/branch/AVR_Entry/branch/Duet_Dev"
 let ROOT_2017CR = "~/Dev/2017RCV/branch/CR_N775/trunk"
 let ROOT_2016RCV = "~/Dev/2016RCV/branch/AVR/Entry_MP/"
 let ROOT_2016Mid = "~/Dev/2016RCV/branch/AVR/Mid_MP/"
+let ROOT_2016High = "~/Dev/2016RCV/branch/AVR/High_MP/"
 let ROOT_2016Bar = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR_MP/"
-let ROOT_2016Slim = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_BAR/"
 let ROOT_2016Slim_Update = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM5CH_MP"
+let ROOT_2016Slim2ch = "~/Dev/2016RCV/branch/SLIM_BAR/SLIM_MP"
+let ROOT_2016FST = "~/Dev/2016RCV/branch/FST/FST_MP"
 let ROOT_csharp = "~/csharp_project/"
+let ROOT_c = "~/Dev/c/"
+let ROOT_ruby = "~/Dev/ruby/"
+let ROOT_rasp = "~/Dev/raspbian_kernel/linux/"
+let ROOT_rasp_doc = "~/Dev/raspbian_kernel/linux/Documentation"
 
 "translategoogleの翻訳元と翻訳後の設定
-let g:translategoogle_default_sl = 'ja'
-let g:translategoogle_default_tl = 'en'
+let g:translategoogle_default_sl = 'en'
+let g:translategoogle_default_tl = 'ja'
 
-noremap <Leader>rt :let $ROOT = ROOT_
+noremap <Leader>rt :call SetRoot(ROOT_
 noremap <Leader>rr :echo $ROOT<CR>
 
 noremap <Leader>tt :call SetTagSearchRoot()<CR>:set tags<CR>
 noremap <Leader>ts :tsel<CR>
-
-noremap <C-]> :call ExecuteTagJump()<CR>
 
 function! ExecuteTagJump()
 	let word = expand("<cword>")
@@ -94,16 +101,17 @@ noremap <Leader>q :qa!<CR>
 noremap <Leader>ag :Unite grep -auto-resize -buffer-name=grep-buffer<CR>
 noremap <Leader>ac :cd $ROOT/src<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>
 noremap <Leader>ar :cd $ROOT/src<CR>:Unite grep -auto-resize -buffer-name=grep-buffer<CR>
-noremap <Leader>a0 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./<CR>
-noremap <Leader>a1 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../<CR>
-noremap <Leader>a2 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../../<CR>
-noremap <Leader>a3 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>./../../../<CR>
+noremap <Leader>a0 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>/
+noremap <Leader>a1 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>/..
+noremap <Leader>a2 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>/../..
+noremap <Leader>a3 :cd %:p:h<CR>:UniteWithCursorWord grep -auto-resize -buffer-name=grep-buffer<CR>/../../..
 
 noremap <Leader>bl :Unite bookmark -no-quit -auto-resize<CR>
 noremap <Leader>bm :UniteBookmarkAdd<CR><CR><CR>
 
 "カレントフォルダの移動
 noremap <Leader>cd :cd %:p:h<CR>:pwd<CR>
+noremap <Leader>cr :cd $ROOT<CR>
 noremap <Leader>0 ::pwd<CR>
 noremap <Leader>1 :cd ..<CR>:pwd<CR>
 noremap <Leader>2 :cd ../..<CR>:pwd<CR>
@@ -119,6 +127,7 @@ noremap <Leader>vf :cd %:p:h<CR>:VimFilerSplit -winwidth=50 -no-quit .<CR>
 "Unite系操作
 noremap <Leader>fr :Unite file_mru -auto-resize<CR>
 noremap <Leader>ff :cd $ROOT/src<CR>:Unite find -auto-resize -buffer-name=find-buffer<CR><CR>'*.[ch]'<CR>
+noremap <Leader>fa :cd $ROOT<CR>:Unite find -auto-resize -buffer-name=find-buffer<CR><CR>'*'<CR>
 "Document検索は検索開始ディレクトリは固定
 noremap <Leader>fd :cd ~/Document<CR>:Unite find -auto-resize -default-action=start -buffer-name=doc-buffer<CR><CR>'*.*'<CR>
 noremap <Leader>fb :UniteResume
@@ -126,7 +135,6 @@ noremap <Leader>bf :Unite file buffer<CR>
 noremap <Leader>fc :echo expand("%:p")<CR>
 noremap <Leader>fe :cd %:p:h<CR>:!cygstart .<CR><CR>
 noremap <Leader>fn :echo expand('%:p')<CR>
-noremap <Leader>fa :cd ~/Document<CR>:Unite find -auto-resize -buffer-name=doc-buffer<CR><CR>'*.*'<CR>
 
 "Helpを引く
 " noremap <Leader>hh :Unite help -no-quit -tab<CR>
@@ -145,7 +153,8 @@ noremap <Leader>sp :cd %:p:h<CR>:!svn diff % > %.patch<CR>
 noremap <Leader>sa :cd %:p:h<CR>:normal st<CR>:r!svn log -v<CR>
 noremap <Leader>sl :call SvnLog()<CR>
 noremap <Leader>sr :call SvnRootLog()<CR>
-" noremap <Leader>sr :cd %:p:h<CR>:!svn revert %<CR>:e!<CR>
+noremap <Leader>sc :call SvnRootRepoStatus()<CR>
+noremap <Leader>sd :call SvnDiffLocal()<CR>
 
 let g:tcomment_types = {
       \'c_to_cpp_surround' : "// %s",
@@ -176,6 +185,7 @@ noremap <Leader>wb :VimwikiGoBackLink<CR>
 noremap <Leader>wI :normal! i{{file:///C:/cygwin64/home/jkobayashi/vimwiki_html/images/#####.png}}<CR>
 noremap <Leader>wp :call VimwikiHtmlPreview_()<CR>
 noremap <Leader>wb :VimwikiGoBackLink<CR>
+noremap <Leader>wf :cd $VIMWIKI_ROOT<CR>:Unite grep -auto-resize -buffer-name=grep-buffer<CR>
 
 "クリップボード動作
 vnoremap <Leader>pc :w !cat > /dev/clipboard<CR>
@@ -205,18 +215,33 @@ function! VimwikiLinkHandler(link)
     let link = a:link
     if link =~# '^vfile:'
         let link = link[1:]
-    else
-        return 0
+		let link_infos = vimwiki#base#resolve_link(link)
+		if link_infos.filename == ''
+			echomsg 'Vimwiki Error: Unable to resolve link!'
+			return 0
+		else
+			" exe 'tabnew ' . fnameescape(link_infos.filename)
+			echomsg fnameescape(link_infos.filename)
+			call system("cygstart ".fnameescape(link_infos.filename))
+			return 1
+		endif
+	endif
+	
+	if link =~# '^Notes:'
+        let link = link[0:]
+		call system("cygstart ".fnameescape(link))
+		return 1
     endif
-    let link_infos = vimwiki#base#resolve_link(link)
-    if link_infos.filename == ''
-        echomsg 'Vimwiki Error: Unable to resolve link!'
-        return 0
-    else
-        " exe 'tabnew ' . fnameescape(link_infos.filename)
-        echomsg fnameescape(link_infos.filename)
-        call system("cygstart ".fnameescape(link_infos.filename))
-        return 1
+	
+	if link =~# '^http'
+        let link = link[0:]
+		call system("cygstart ".fnameescape(link))
+		return 1
+    endif
+	if link =~# '^svn:'
+        let link = link[0:]
+		call system("cygstart ".fnameescape(link))
+		return 1
     endif
 endfunction
 
@@ -273,11 +298,13 @@ nnoremap sO <C-w>=
 nnoremap sN :<C-u>bn<CR>
 nnoremap sP :<C-u>bp<CR>
 nnoremap st :<C-u>tabnew<CR>
+nnoremap sto :tabo<CR>
 nnoremap sd :<C-u>tabnew<CR>:set filetype=drawit<CR>
 nnoremap sc :<C-u>tabc<CR>
 nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
 nnoremap sv :<C-u>vs<CR>
+nnoremap svn :<C-u>vs<CR>
 nnoremap sq :<C-u>q!<CR>
 nnoremap sb :<C-u>bd!<CR>
 
@@ -347,8 +374,19 @@ function! SvnLog()
 	let curfile = expand("%:p")
 	" let curfile = expand("$ROOT")
 	let winpath = system("cygpath -w " . curfile)
+	let winpath = substitute(winpath, '\\\n', '', 'g')
 	let winpath = substitute(winpath, '\n', '', 'g')
 	let command = "!TortoiseProc.exe /command:log /path:" . "\"" . winpath . "\"" . " &"
+	execute(command)
+endfunction
+
+function! SvnRootRepoStatus()
+	" let curfile = expand("%:p")
+	let curfile = expand("$ROOT")
+	let winpath = system("cygpath -w " . curfile)
+	let winpath = substitute(winpath, '\\\n', '', 'g')
+	let winpath = substitute(winpath, '\n', '', 'g')
+	let command = "!TortoiseProc.exe /command:repostatus /path:" . "\"" . winpath . " \"" . " &"
 	execute(command)
 endfunction
 
@@ -356,9 +394,31 @@ function! SvnRootLog()
 	" let curfile = expand("%:p")
 	let curfile = expand("$ROOT")
 	let winpath = system("cygpath -w " . curfile)
+	let winpath = substitute(winpath, '\\\n', '', 'g')
 	let winpath = substitute(winpath, '\n', '', 'g')
 	let command = "!TortoiseProc.exe /command:log /path:" . "\"" . winpath . "\"" . " &"
 	execute(command)
+endfunction
+
+function! SvnDiffLocal()
+	let curfile = expand("%:p")
+	" let curfile = expand("$ROOT")
+	let winpath = system("cygpath -w " . curfile)
+	let winpath = substitute(winpath, '\\\n', '', 'g')
+	let winpath = substitute(winpath, '\n', '', 'g')
+	let command = "!TortoiseProc.exe /command:diff /path:" . "\"" . winpath . "\"" . " &"
+	execute(command)
+endfunction
+
+function! VimWiki2HTML_plus()
+	execute 'Vimwiki2HTML'
+endfunction
+
+function! SetRoot(path)
+	echo a:path
+	let $ROOT = a:path
+	let &tags = "tags;/" . a:path . "/"
+
 endfunction
 
 augroup MY_AUTO_CMD
@@ -368,7 +428,7 @@ augroup MY_AUTO_CMD
 	autocmd BufWritePost,FileWritePost *.asciidoc execute 'silent !cygstart %:r.html'
 	autocmd BufWritePost,FileWritePost *.pu execute '!plantuml.sh %:p'
 	autocmd BufWritePost,FileWritePost *.tc execute '!tcbmp.exe `cygpath -w %:p` `cygpath -w ./images/%:r.bmp`'
-	autocmd BufWritePost,FileWritePost *.wiki execute 'Vimwiki2HTML'
+	autocmd BufWritePost,FileWritePost *.wiki call VimWiki2HTML_plus()
 	autocmd BufRead,BufNewFile *.diag           set filetype=blockdiag
 	autocmd BufWritePost,FileWritePost *.diag execute '!blockdiag %'
 	" autocmd BufWritePost,FileWritePost *.wiki execute 'VimwikiAll2HTML'
@@ -456,7 +516,7 @@ let g:vimwiki_html_header_numbering = 2
 let g:airline_enable_branch = 0
 let g:airline_section_b = "%t %M"
 " let g:airline_section_c = "%{fugitive#statusline()}"
-let g:airline_section_c = "%{expand($ROOT)}"
+let g:airline_section_c = "%{substitute(expand($ROOT), \"^.*/Dev\", \"\", 'g')}"
 let s:sep = " %{get(g:, 'airline_right_alt_sep', '')} "
 let g:airline_section_x =
 			\ "%{strlen(&fileformat)?&fileformat:''}".s:sep.
@@ -543,6 +603,7 @@ call dein#add('vim-scripts/ifdef-highlighting')
 call dein#add('xolox/vim-session', {
 			\ 'depends': ['xolox/vim-misc']})
 call dein#add('daisuzu/translategoogle.vim')
+call dein#add('vim-scripts/vbnet.vim')
 
 " Required:
 call dein#end()
@@ -567,7 +628,7 @@ set t_ut=
 
 "乱数生成
 function! SetBgColor()
-		execute 'colorscheme badwolf_gui'
+	execute 'colorscheme modokai_gui'
 	" let match_end = matchend(reltimestr(reltime()), '\d\+\.') + 1
 	" let rand = reltimestr(reltime())[l:match_end : ] % (10 + 1)
 	" if rand == 0
