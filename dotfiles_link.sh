@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 ln -sf ~/dotfiles/.clang-format ~/.clang-format
 ln -sf ~/dotfiles/.tmux.conf ~/.tmux.conf
